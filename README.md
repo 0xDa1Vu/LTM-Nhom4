@@ -8,11 +8,12 @@
 
 | STT | Họ và Tên | MSSV | Vai trò |
 |-----|-----------|------|---------|
-| 1 | Nguyễn Văn A | 12345678 | Nhóm trưởng, Backend |
-| 2 | Trần Thị B | 87654321 | Frontend, Báo cáo |
-| 2 | Trần Thị B | 87654321 | Frontend, Báo cáo |
-| 2 | Trần Thị B | 87654321 | Frontend, Báo cáo |
-| 2 | Trần Thị B | 87654321 | Frontend, Báo cáo |
+| 1 | Nguyễn Trọng Nhân | 077206000056 | Nhóm trưởng|
+| 2 | Mai Vũ Đại Vũ | 075206002454 | |
+| 2 | Lý Đình Bảo | 094206004632 | |
+| 2 | Lý Gia Bảo | 072206000828 | |
+| 2 | Nguyễn Minh Nhựt | 095206003312 | |
+| 2 | Ngô Hoàng Hiếu | 091206009023 | |
 
 ---
 
@@ -76,10 +77,10 @@ co-tuong-online/
 
 | Thành phần | Công nghệ dự kiến |
 |------------|-------------------|
-| Ngôn ngữ | Java / Python / C++ |
-| Giao thức mạng | TCP Socket |
-| Giao diện | JavaFX / Pygame / Qt |
-| Giao tiếp | Client-Server hoặc P2P |
+| Ngôn ngữ | |
+| Giao thức mạng |  |
+| Giao diện |  |
+| Giao tiếp |  |
 
 ---
 
@@ -107,22 +108,10 @@ cd src/client
 
 ---
 
-## 🎥 Video Báo Cáo
-
-| Nội dung | Link |
-|----------|------|
-| 📹 Video thuyết trình | [Dán link Drive/YouTube tại đây] |
-
-> Video bao gồm phần trình bày của từng thành viên, hiển thị mặt để đối chiếu, và demo chương trình chạy thực tế.
-
----
-
 ## 📋 Phân Công Nhiệm Vụ
 
 | Thành viên | Nhiệm vụ | Tiến độ |
 |------------|----------|---------|
-| Nguyễn Văn A | Thiết kế kiến trúc mạng, lập trình Server | 🔲 Chưa bắt đầu |
-| Trần Thị B | Giao diện người dùng, báo cáo | 🔲 Chưa bắt đầu |
 | ... | ... | ... |
 
 ---
