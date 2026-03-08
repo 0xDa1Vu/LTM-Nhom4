@@ -57,11 +57,11 @@ co-tuong-online/
 │       └── ...
 │
 ├── docs/                       # Tài liệu
-│   ├── BaoCao.docx             # Báo cáo Word
-│   └── Slide_ThuyetTrinh.pptx  # PowerPoint thuyết trình
+│   ├── Bao_cao.docx             # Báo cáo Word
+│   └── Thuyet_trinh.pptx  # PowerPoint thuyết trình
 │
 ├── reports/                    # Bảng phân công nhiệm vụ
-│   └── PhanCongNhiemVu.xlsx
+│   └── Phan_cong.xlsx
 │
 ├── assets/                     # Hình ảnh quân cờ, bàn cờ
 │   └── images/
