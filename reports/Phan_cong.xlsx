@@ -1,1 +1,7 @@
-
+STT	Thành viên	Vai trò	Nhiệm vụ chi tiết (Cần hoàn thành & Commit lên Git)	Sản phẩm bàn giao
+1	Nguyễn Trọng Nhân	Server Manager	1. Tạo Solution C# chuẩn trên Visual Studio.2. Viết code mở cổng TcpListener (File ServerManager.cs).3. Thiết lập hệ thống ghi nhật ký (File Logger.cs).4. Xử lý đa luồng để nhận nhiều Client (File ClientHandler.cs).	Link GitHub & Project Server chạy được
+2	Mai Vũ Đại Vũ	Client Network	1. Viết code kết nối TcpClient tới IP của Server.2. Xử lý luồng gửi/nhận dữ liệu thô (byte[]) từ phía người chơi.3. Phối hợp với Nhóm trưởng để test việc "bắt tay" kết nối giữa 2 máy.	SocketClient.cs
+3	Lý Đình Bảo	GUI Designer	1. Thiết kế giao diện WinForms chính (Bàn cờ, các nút Thách đấu, Thoát).2. Tìm và cắt bộ ảnh quân cờ (png) đủ 32 quân.3. Hiển thị bàn cờ lên màn hình một cách cân đối.	FormMain.cs & Folder Assets
+4	Lý Gia Bảo	Game Logic	1. Định nghĩa Class Piece (quân cờ) và Board (bàn cờ).2. Thiết lập mảng 2 chiều đại diện cho 90 giao điểm trên bàn cờ.3. Viết hàm khởi tạo vị trí mặc định cho các quân cờ lúc mới bắt đầu.	Piece.cs, Board.cs
+5	Nguyễn Minh Nhựt	Protocol & Timer	1. Định nghĩa bộ mã lệnh Enum (ví dụ: Login=10, Move=20).2. Thiết kế cấu trúc gói tin Packet để gửi qua mạng.3. Tìm hiểu và viết class đếm ngược thời gian suy nghĩ (Timer).	Protocol.cs, GameTimer.cs
+6	Ngô Hoàng Hiếu	Admin & Tester	1. Soạn file Word báo cáo: Mục tiêu, lý do chọn đề tài, danh sách thành viên.2. Quản lý tiến độ (nhắc nhở mọi người commit đúng hạn).3. Chuẩn bị kịch bản Test kết nối tuần 1 (các lỗi có thể gặp).	Bao_cao.docx, Task_List.xlsx
