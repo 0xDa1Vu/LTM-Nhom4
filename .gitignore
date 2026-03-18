@@ -1,2 +1,7 @@
 /.vs/
-text [Bb]in/ [Oo]bj/
+[Vv]s/
+bin/
+obj/
+*.user
+*.suo
+*.pdb
