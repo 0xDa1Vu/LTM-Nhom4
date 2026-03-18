@@ -1,6 +1,14 @@
-
+# Chặn thư mục cấu hình của Visual Studio
 .vs/
+
+# Chặn các thư mục biên dịch (Build outputs)
 [Bb]in/
 [Oo]bj/
+
+# Chặn các file người dùng cá nhân
 *.user
-server_log.txt
+*.suo
+*.pdb
+
+# Chặn file Log tự sinh (nếu có)
+*.log
