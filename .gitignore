@@ -1,7 +1,6 @@
-/.vs/
-[Vv]s/
-bin/
-obj/
+
+.vs/
+[Bb]in/
+[Oo]bj/
 *.user
-*.suo
-*.pdb
+server_log.txt
