@@ -26,6 +26,8 @@ namespace CoTuongOnline.Client
         /// không đảm bảo ranh giới theo message nếu chưa có framing/protocol.
         /// </summary>
         public event Action<byte[]>? DataReceived;
+        public event Action<Exception>? ConnectionError;
+
 
         /// <summary>
         /// Kết nối tới server.
@@ -106,9 +108,10 @@ namespace CoTuongOnline.Client
                 {
                     break;
                 }
-                catch
+                catch (Exception ex)
                 {
                     // Có thể do server đóng kết nối hoặc lỗi mạng.
+                    ConnectionError?.Invoke(ex);
                     break;
                 }
 
