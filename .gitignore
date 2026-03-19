@@ -12,3 +12,6 @@
 
 # Chặn file Log tự sinh (nếu có)
 *.log
+
+# Log tự sinh khi chạy server
+src/server/server_log.txt
