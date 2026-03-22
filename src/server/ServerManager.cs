@@ -26,7 +26,6 @@ namespace ChessServer
                 TcpClient incomingClient = _listener.AcceptTcpClient();
 
                 // Có người vào thì ghi log lại IP của họ
-                Logger.WriteLog($"[+] Khách mới kết nối từ: {incomingClient.Client.RemoteEndPoint}");
 
                 // Tạo một "nhân viên phục vụ" (ClientHandler) cho khách này
                 ClientHandler handler = new ClientHandler(incomingClient);
