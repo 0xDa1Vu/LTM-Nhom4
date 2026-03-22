@@ -46,26 +46,46 @@ Dự án này xây dựng một **ứng dụng chơi Cờ Tướng qua mạng** 
 ## 🗂️ Cấu Trúc Repository
 
 ```
-co-tuong-online/
+ChessGame_Online/
 │
-├── src/                        # Toàn bộ mã nguồn
-│   ├── server/                 # Code phía Server
-│   │   └── ...
-│   ├── client/                 # Code phía Client
-│   │   └── ...
-│   └── common/                 # Logic dùng chung (luật cờ, v.v.)
-│       └── ...
+├── src/                              # Toàn bộ mã nguồn
+│   ├── server/                       # Code phía Server
+│   │   ├── Program.cs                # Điểm khởi động server
+│   │   ├── ServerManager.cs          # Mở cổng, đón kết nối TCP
+│   │   ├── ClientHandler.cs          # Xử lý từng client riêng biệt
+│   │   ├── Logger.cs                 # Ghi log ra console và file
+│   │   └── Server.csproj             # Cấu hình project server
+│   │
+│   ├── client/                       # Code phía Client
+│   │   ├── UI/
+│   │   │   ├── Form1.cs              # Giao diện bàn cờ WinForms
+│   │   │   └── Form1.Designer.cs     # File tự sinh của Visual Studio
+│   │   ├── Network/
+│   │   │   └── SocketClient.cs       # Kết nối TCP, gửi/nhận dữ liệu
+│   │   ├── Program.cs                # Khởi động ứng dụng WinForms
+│   │   └── Client.csproj             # Cấu hình project client
+│   │
+│   ├── common/                       # Logic dùng chung
+│   │   ├── Piece.cs                  # Định nghĩa quân cờ
+│   │   ├── Board.cs                  # Định nghĩa bàn cờ 9x10
+│   │   ├── Protocol.cs               # Giao thức gói tin TCP
+│   │   └── Gametime.cs               # Đồng hồ và lịch sử nước đi
+│   │
+│   └── test/                         # Project test mạng
+│       └── NetworkTest/
+│           └── Program.cs            # Test kết nối TCP độc lập
 │
-├── docs/                       # Tài liệu
-│   ├── Bao_cao.docx             # Báo cáo Word
-│   └── Thuyet_trinh.pptx  # PowerPoint thuyết trình
+├── docs/                             # Tài liệu
+│   ├── Bao_cao.docx                  # Báo cáo Word
+│   └── Thuyet_trinh.pptx             # PowerPoint thuyết trình
 │
-├── reports/                    # Bảng phân công nhiệm vụ
+├── reports/                          # Bảng phân công nhiệm vụ
 │   └── Phan_cong.xlsx
 │
-├── assets/                     # Hình ảnh quân cờ, bàn cờ
-│   └── images/
+├── assets/                           # Hình ảnh
+│   └── images/                       # Ảnh quân cờ PNG
 │
+├── .gitignore
 └── README.md
 ```
 
