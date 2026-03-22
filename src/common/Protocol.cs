@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace CoTuongGame.Network
+namespace CoTuongOnline.Network
 {
     // Enum mã lệnh
     public enum PacketType : byte
@@ -16,6 +16,7 @@ namespace CoTuongGame.Network
     }
 
     // Header gói tin (5 bytes)
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct PacketHeader
     {
         public PacketType Type;
@@ -64,7 +65,14 @@ namespace CoTuongGame.Network
         // Đọc dữ liệu gói tin
         public static string ReadData(byte[] buffer)
         {
+            if (buffer == null || buffer.Length < HEADER_SIZE)
+                throw new ArgumentException("Buffer không hợp lệ hoặc quá ngắn.");
+
             PacketHeader header = BytesToStruct<PacketHeader>(buffer);
+
+            if (buffer.Length < HEADER_SIZE + header.Length)
+                throw new ArgumentException("Buffer không đủ dữ liệu.");
+
             return Encoding.UTF8.GetString(buffer, HEADER_SIZE, header.Length);
         }
 
