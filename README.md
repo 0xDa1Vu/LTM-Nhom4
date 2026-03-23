@@ -128,12 +128,4 @@ cd src/client
 
 ---
 
-## 📋 Phân Công Nhiệm Vụ
-
-| Thành viên | Nhiệm vụ | Tiến độ |
-|------------|----------|---------|
-| ... | ... | ... |
-
----
-
 *Đồ án môn Lập Trình Mạng — [Đại học Giao Thông Vận Tải Tp.Hồ Chí Minh]
