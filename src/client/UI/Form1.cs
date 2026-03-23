@@ -8,12 +8,11 @@ namespace CoTuongOnline.Client
 {
     public partial class Form1 : Form
     {
-        // ── Cấu hình bàn cờ ──────────────────────────────────────────────
+        // Cấu hình bàn cờ 
         private const int Cell = 60;  // kích thước 1 ô (px)
         private const int StartX = 30;  // lề trái
         private const int StartY = 30;  // lề trên
         // Bàn cờ: 9 cột (0-8) × 10 hàng (0-9)
-        // ─────────────────────────────────────────────────────────────────
 
         private readonly Dictionary<string, Image> _pieces = new Dictionary<string, Image>();
 
@@ -35,9 +34,7 @@ namespace CoTuongOnline.Client
             LoadImages();
         }
 
-        // ══════════════════════════════════════════════════════════════════
         //  VẼ BÀN CỜ + QUÂN
-        // ══════════════════════════════════════════════════════════════════
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
@@ -101,7 +98,7 @@ namespace CoTuongOnline.Client
             g.DrawString("漢界", fontRiver, Brushes.DarkRed,
                          StartX + 4.8f * Cell, StartY + 4.15f * Cell);
 
-            // ── Quân ĐỎ ──────────────────────────────────────────────────
+            // ── Quân ĐỎ
             DrawPiece(g, "tuong_do", 4, 9);   // Tướng
             DrawPiece(g, "si_do", 3, 9);   // Sĩ trái
             DrawPiece(g, "si_do", 5, 9);   // Sĩ phải
@@ -120,9 +117,7 @@ namespace CoTuongOnline.Client
             DrawPiece(g, "tot_do", 8, 6);
         }
 
-        // ══════════════════════════════════════════════════════════════════
         //  VẼ 1 QUÂN CỜ – căn đúng tâm giao điểm (col, row)
-        // ══════════════════════════════════════════════════════════════════
         private void DrawPiece(Graphics g, string key, int col, int row)
         {
             if (!_pieces.ContainsKey(key)) return;
@@ -134,9 +129,7 @@ namespace CoTuongOnline.Client
             g.DrawImage(_pieces[key], cx - size / 2, cy - size / 2, size, size);
         }
 
-        // ══════════════════════════════════════════════════════════════════
         //  DẤU GÓC (mark) tại giao điểm col, row
-        // ══════════════════════════════════════════════════════════════════
         private void DrawMark(Graphics g, Pen pen, int col, int row)
         {
             int x = StartX + col * Cell;
@@ -166,9 +159,7 @@ namespace CoTuongOnline.Client
             }
         }
 
-        // ══════════════════════════════════════════════════════════════════
         //  NẠP ẢNH
-        // ══════════════════════════════════════════════════════════════════
         private void LoadImages()
         {
             string basePath = Path.GetFullPath(Path.Combine(
@@ -197,9 +188,7 @@ namespace CoTuongOnline.Client
             }
         }
 
-        // ══════════════════════════════════════════════════════════════════
         //  LOAD FORM – thêm nút
-        // ══════════════════════════════════════════════════════════════════
         private void Form1_Load(object sender, EventArgs e)
         {
             int btnX = StartX * 2 + 8 * Cell + 25;
