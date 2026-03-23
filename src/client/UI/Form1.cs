@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
+
 
 namespace CoTuongOnline.Client
 {
@@ -15,12 +17,15 @@ namespace CoTuongOnline.Client
         int cell = 40;
         int startX = 20;
         int startY = 20;
+        private Dictionary<string, Image> _pieces = new Dictionary<string, Image>();
+
 
         public Form1()
         {
             InitializeComponent();
             this.DoubleBuffered = true;
             this.Paint += Form1_Paint;
+            LoadImages();
         }
 
         private void Form1_Paint(object sender, PaintEventArgs e)
@@ -71,6 +76,64 @@ namespace CoTuongOnline.Client
             Font font = new Font("Arial", 20, FontStyle.Bold);
             g.DrawString("楚河", font, Brushes.Black, startX + 1.3f * cell, startY + 4.2f * cell);
             g.DrawString("漢界", font, Brushes.Black, startX + 5f * cell, startY + 4.2f * cell);
+
+            // ===== VẼ QUÂN ĐỎ =====
+            DrawPiece(g, "tuong_do", 4, 9);
+
+            DrawPiece(g, "si_do", 3, 9);
+            DrawPiece(g, "si_do", 5, 9);
+
+            DrawPiece(g, "xe_do", 0, 9);
+            DrawPiece(g, "xe_do", 8, 9);
+
+            DrawPiece(g, "ma_do", 1, 9);
+            DrawPiece(g, "ma_do", 7, 9);
+
+            DrawPiece(g, "phao_do", 1, 7);
+            DrawPiece(g, "phao_do", 7, 7);
+
+            DrawPiece(g, "tot_do", 0, 6);
+            DrawPiece(g, "tot_do", 2, 6);
+            DrawPiece(g, "tot_do", 4, 6);
+            DrawPiece(g, "tot_do", 6, 6);
+            DrawPiece(g, "tot_do", 8, 6);
+            // =======================
+        }
+
+        private void LoadImages()
+        {
+            string basePath = Path.GetFullPath(Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                "..", "..", "..", "..", "..",
+                "assets", "images"
+            ));
+
+            var files = new Dictionary<string, string>
+    {
+        { "tuong_do", "Tuongdo1.png" },
+        { "xe_do",    "Xedo1.png"    },
+        { "ma_do",    "Mado1.png"    },
+        { "phao_do",  "Phaodo1.png"  },
+        { "si_do",    "Sido1.png"    },
+        { "tot_do",   "Totdo1.png"   }
+    };
+
+            foreach (var item in files)
+            {
+                string fullPath = Path.Combine(basePath, item.Value);
+                if (File.Exists(fullPath))
+                    _pieces[item.Key] = Image.FromFile(fullPath);
+                else
+                    Console.WriteLine($"Không tìm thấy: {fullPath}");
+            }
+        }
+
+        private void DrawPiece(Graphics g, string key, int col, int row)
+        {
+            if (!_pieces.ContainsKey(key)) return;
+            int x = startX + col * cell - cell / 2 + 2;
+            int y = startY + row * cell - cell / 2 + 2;
+            g.DrawImage(_pieces[key], x, y, cell - 4, cell - 4);
         }
 
         void DrawMark(Graphics g, Pen pen, int startX, int startY, int cell, int col, int row)
