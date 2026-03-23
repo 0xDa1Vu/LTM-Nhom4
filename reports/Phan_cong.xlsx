@@ -1,3 +1,7 @@
+===============
+NHIỆM VỤ TUẦN 1
+===============
+
 STT	Thành viên	Vai trò	Nhiệm vụ chi tiết (Cần hoàn thành & Commit lên Git)	Sản phẩm bàn giao
 1	Nguyễn Trọng Nhân	Server Manager	1. Tạo Solution C# chuẩn trên Visual Studio.2. Viết code mở cổng TcpListener (File ServerManager.cs).3. Thiết lập hệ thống ghi nhật ký (File Logger.cs).4. Xử lý đa luồng để nhận nhiều Client (File ClientHandler.cs).	Link GitHub & Project Server chạy được
 2	Mai Vũ Đại Vũ	Client Network	1. Viết code kết nối TcpClient tới IP của Server.2. Xử lý luồng gửi/nhận dữ liệu thô (byte[]) từ phía người chơi.3. Phối hợp với Nhóm trưởng để test việc "bắt tay" kết nối giữa 2 máy.	SocketClient.cs
@@ -5,3 +9,15 @@ STT	Thành viên	Vai trò	Nhiệm vụ chi tiết (Cần hoàn thành & Commit l
 4	Lý Gia Bảo	Game Logic	1. Định nghĩa Class Piece (quân cờ) và Board (bàn cờ).2. Thiết lập mảng 2 chiều đại diện cho 90 giao điểm trên bàn cờ.3. Viết hàm khởi tạo vị trí mặc định cho các quân cờ lúc mới bắt đầu.	Piece.cs, Board.cs
 5	Nguyễn Minh Nhựt	Protocol & Timer	1. Định nghĩa bộ mã lệnh Enum (ví dụ: Login=10, Move=20).2. Thiết kế cấu trúc gói tin Packet để gửi qua mạng.3. Tìm hiểu và viết class đếm ngược thời gian suy nghĩ (Timer).	Protocol.cs, GameTimer.cs
 6	Ngô Hoàng Hiếu	Admin & Tester	1. Soạn file Word báo cáo: Mục tiêu, lý do chọn đề tài, danh sách thành viên.2. Quản lý tiến độ (nhắc nhở mọi người commit đúng hạn).3. Chuẩn bị kịch bản Test kết nối tuần 1 (các lỗi có thể gặp).	Bao_cao.docx, Task_List.xlsx
+
+===============
+NHIỆM VỤ TUẦN 2
+===============
+STT	Thành viên	Vai trò	Nhiệm vụ chi tiết (Cần hoàn thành & Commit lên Git)	Sản phẩm bàn giao
+1	Nguyễn Trọng Nhân	Server Manager	2. Nâng cấp xử lý đa luồng (Task/Thread) để hỗ trợ nhiều cặp đấu cùng lúc. 2. Code logic quản lý phòng chơi (Room) và ghép cặp người chơi.	RoomManager.cs, MultiThreadServer
+2	Mai Vũ Đại Vũ	Client Network	2. Viết bộ giải mã gói tin (Packet Parser) để đọc dữ liệu từ Server. 2. Xử lý sự kiện cập nhật bàn cờ khi nhận được nước đi từ đối thủ qua mạng.	PacketParser.cs, ClientEventListener.cs
+3	Lý Đình Bảo	GUI Designer	2. Hoàn thiện hiệu ứng Click/Chọn quân cờ và đổi màu ô cờ khi có nước đi mới. 2. Hiển thị thông báo trạng thái: "Đến lượt bạn", "Đang chờ đối thủ...".	FormMain.Designer.cs, UIEffects.cs
+4	Lý Gia Bảo	Game Logic	2. Viết logic kiểm tra luật di chuyển cho từng loại quân cờ (Xe, Pháo, Mã...). 2. Xây dựng hàm kiểm tra trạng thái Chiếu tướng và Chiếu bí.	ChessRules.cs, MoveValidator.cs
+5	Nguyễn Minh Nhựt	Protocol & Timer	2. Hoàn thiện đồng hồ đếm ngược (Countdown Timer) cho mỗi lượt đi. 2. Định nghĩa đầy đủ bộ mã lệnh: MOVE, CHAT, SURRENDER, READY.	GameTimer.cs, ProtocolEnums.cs
+6	Ngô Hoàng Hiếu	Logic & Security	2. Viết hệ thống Đăng nhập (Username) và Quản lý danh sách User Online. 2. Code tính năng Chat giữa 2 người chơi và bộ lọc tin nhắn (Spam filter).	UserManager.cs, ChatHandler.cs
+				
