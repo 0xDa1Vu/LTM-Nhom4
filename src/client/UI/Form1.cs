@@ -8,11 +8,12 @@ namespace CoTuongOnline.Client
 {
     public partial class Form1 : Form
     {
-        // Cấu hình bàn cờ 
+        // ── Cấu hình bàn cờ ──────────────────────────────────────────────
         private const int Cell = 60;  // kích thước 1 ô (px)
         private const int StartX = 30;  // lề trái
         private const int StartY = 30;  // lề trên
         // Bàn cờ: 9 cột (0-8) × 10 hàng (0-9)
+        // ─────────────────────────────────────────────────────────────────
 
         private readonly Dictionary<string, Image> _pieces = new Dictionary<string, Image>();
 
@@ -20,7 +21,6 @@ namespace CoTuongOnline.Client
         {
             InitializeComponent();
 
-            // Kích thước cửa sổ vừa đủ chứa bàn cờ + vùng nút bên phải
             this.ClientSize = new Size(StartX * 2 + 8 * Cell + 200,
                                             StartY * 2 + 9 * Cell);
             this.Text = "Cờ Tướng Online";
@@ -34,7 +34,9 @@ namespace CoTuongOnline.Client
             LoadImages();
         }
 
+        // ══════════════════════════════════════════════════════════════════
         //  VẼ BÀN CỜ + QUÂN
+        // ══════════════════════════════════════════════════════════════════
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
@@ -75,7 +77,7 @@ namespace CoTuongOnline.Client
                 }
             }
 
-            // Cung điện – đường chéo X trên (hàng 0-2) và dưới (hàng 7-9)
+            // Cung điện trên (hàng 0-2) và dưới (hàng 7-9)
             g.DrawLine(pen, StartX + 3 * Cell, StartY, StartX + 5 * Cell, StartY + 2 * Cell);
             g.DrawLine(pen, StartX + 5 * Cell, StartY, StartX + 3 * Cell, StartY + 2 * Cell);
             g.DrawLine(pen, StartX + 3 * Cell, StartY + 7 * Cell, StartX + 5 * Cell, StartY + 9 * Cell);
@@ -98,38 +100,60 @@ namespace CoTuongOnline.Client
             g.DrawString("漢界", fontRiver, Brushes.DarkRed,
                          StartX + 4.8f * Cell, StartY + 4.15f * Cell);
 
-            // ── Quân ĐỎ
-            DrawPiece(g, "tuong_do", 4, 9);   // Tướng
-            DrawPiece(g, "si_do", 3, 9);   // Sĩ trái
-            DrawPiece(g, "si_do", 5, 9);   // Sĩ phải
-            DrawPiece(g, "tuong_do", 2, 9);   // Tượng trái
-            DrawPiece(g, "tuong_do", 6, 9);   // Tượng phải
-            DrawPiece(g, "xe_do", 0, 9);   // Xe trái
-            DrawPiece(g, "xe_do", 8, 9);   // Xe phải
-            DrawPiece(g, "ma_do", 1, 9);   // Mã trái
-            DrawPiece(g, "ma_do", 7, 9);   // Mã phải
-            DrawPiece(g, "phao_do", 1, 7);   // Pháo trái
-            DrawPiece(g, "phao_do", 7, 7);   // Pháo phải
-            DrawPiece(g, "tot_do", 0, 6);   // 5 Tốt
+            // ── Quân ĐEN (hàng 0-3, phía trên) ──────────────────────────
+            DrawPiece(g, "vua_den", 4, 0);
+            DrawPiece(g, "si_den", 3, 0);
+            DrawPiece(g, "si_den", 5, 0);
+            DrawPiece(g, "tuong_den", 2, 0);
+            DrawPiece(g, "tuong_den", 6, 0);
+            DrawPiece(g, "xe_den", 0, 0);
+            DrawPiece(g, "xe_den", 8, 0);
+            DrawPiece(g, "ma_den", 1, 0);
+            DrawPiece(g, "ma_den", 7, 0);
+            DrawPiece(g, "phao_den", 1, 2);
+            DrawPiece(g, "phao_den", 7, 2);
+            DrawPiece(g, "tot_den", 0, 3);
+            DrawPiece(g, "tot_den", 2, 3);
+            DrawPiece(g, "tot_den", 4, 3);
+            DrawPiece(g, "tot_den", 6, 3);
+            DrawPiece(g, "tot_den", 8, 3);
+
+            // ── Quân ĐỎ (hàng 6-9, phía dưới) ───────────────────────────
+            DrawPiece(g, "vua_do", 4, 9);
+            DrawPiece(g, "si_do", 3, 9);
+            DrawPiece(g, "si_do", 5, 9);
+            DrawPiece(g, "tuong_do", 2, 9);
+            DrawPiece(g, "tuong_do", 6, 9);
+            DrawPiece(g, "xe_do", 0, 9);
+            DrawPiece(g, "xe_do", 8, 9);
+            DrawPiece(g, "ma_do", 1, 9);
+            DrawPiece(g, "ma_do", 7, 9);
+            DrawPiece(g, "phao_do", 1, 7);
+            DrawPiece(g, "phao_do", 7, 7);
+            DrawPiece(g, "tot_do", 0, 6);
             DrawPiece(g, "tot_do", 2, 6);
             DrawPiece(g, "tot_do", 4, 6);
             DrawPiece(g, "tot_do", 6, 6);
             DrawPiece(g, "tot_do", 8, 6);
         }
 
+        // ══════════════════════════════════════════════════════════════════
         //  VẼ 1 QUÂN CỜ – căn đúng tâm giao điểm (col, row)
+        // ══════════════════════════════════════════════════════════════════
         private void DrawPiece(Graphics g, string key, int col, int row)
         {
             if (!_pieces.ContainsKey(key)) return;
 
-            int size = Cell - 6;            // quân nhỏ hơn ô 3px mỗi bên
-            int cx = StartX + col * Cell; // tọa độ X tâm giao điểm
-            int cy = StartY + row * Cell; // tọa độ Y tâm giao điểm
+            int size = Cell - 6;
+            int cx = StartX + col * Cell;
+            int cy = StartY + row * Cell;
 
             g.DrawImage(_pieces[key], cx - size / 2, cy - size / 2, size, size);
         }
 
-        //  DẤU GÓC (mark) tại giao điểm col, row
+        // ══════════════════════════════════════════════════════════════════
+        //  DẤU GÓC (mark)
+        // ══════════════════════════════════════════════════════════════════
         private void DrawMark(Graphics g, Pen pen, int col, int row)
         {
             int x = StartX + col * Cell;
@@ -159,7 +183,9 @@ namespace CoTuongOnline.Client
             }
         }
 
-        //  NẠP ẢNH
+        // ══════════════════════════════════════════════════════════════════
+        //  NẠP ẢNH – khớp đúng tên file trong assets/images/
+        // ══════════════════════════════════════════════════════════════════
         private void LoadImages()
         {
             string basePath = Path.GetFullPath(Path.Combine(
@@ -170,12 +196,22 @@ namespace CoTuongOnline.Client
 
             var files = new Dictionary<string, string>
             {
-                { "tuong_do", "Tuongdo2.png" },
-                { "xe_do",    "Xedo1.png"    },
-                { "ma_do",    "Mado1.png"    },
-                { "phao_do",  "Phaodo1.png"  },
-                { "si_do",    "Sido1.png"    },
-                { "tot_do",   "Totdo1.png"   },
+                // ── Quân đỏ ───────────────────────────────────────────────
+                { "vua_do",    "Vuado.png"    },  // Tướng đỏ
+                { "tuong_do",  "Tuongdo1.png" },  // Tượng đỏ
+                { "xe_do",     "Xedo1.png"    },
+                { "ma_do",     "Mado1.png"    },
+                { "phao_do",   "Phaodo1.png"  },
+                { "si_do",     "Sido1.png"    },
+                { "tot_do",    "Totdo1.png"   },
+                // ── Quân đen ──────────────────────────────────────────────
+                { "vua_den",   "Vuaden.png"    },  // Tướng đen
+                { "tuong_den", "Tuongden1.png" },  // Tượng đen
+                { "xe_den",    "Xeden1.png"    },
+                { "ma_den",    "Maden1.png"    },
+                { "phao_den",  "Phaoden1.png"  },
+                { "si_den",    "Siden1.png"    },
+                { "tot_den",   "Totden1.png"   },
             };
 
             foreach (var item in files)
@@ -188,7 +224,9 @@ namespace CoTuongOnline.Client
             }
         }
 
-        //  LOAD FORM – thêm nút
+        // ══════════════════════════════════════════════════════════════════
+        //  LOAD FORM – nút Thách Đấu & Thoát
+        // ══════════════════════════════════════════════════════════════════
         private void Form1_Load(object sender, EventArgs e)
         {
             int btnX = StartX * 2 + 8 * Cell + 25;
