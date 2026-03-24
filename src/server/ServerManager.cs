@@ -29,6 +29,10 @@ namespace ChessServer
 
                 // Tạo một "nhân viên phục vụ" (ClientHandler) cho khách này
                 ClientHandler handler = new ClientHandler(incomingClient);
+                Task.Run(() => handler.Process());
+
+                // Ghép cặp vào phòng chơi
+                RoomManager.Instance.HandleNewClient(incomingClient);
 
                 // Đa luồng (Multi-threading)
                 // Ném ông khách này sang một luồng (Task) khác để nhân viên phục vụ, 
