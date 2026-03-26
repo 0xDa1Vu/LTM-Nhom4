@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading.Tasks; // Cần cái này để xài Task (Đa luồng)
+using System.Threading.Tasks; // xài Task (Đa luồng)
 
 namespace ChessServer
 {
