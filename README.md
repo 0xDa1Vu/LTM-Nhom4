@@ -110,8 +110,8 @@ ChessGame_Online/
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/[username]/co-tuong-online.git
-cd co-tuong-online
+git clone https://github.com/0xDa1Vu/LTM-Nhom4.git
+cd ChessGame_Online
 
 # 2. Khởi động Server
 cd src/server
