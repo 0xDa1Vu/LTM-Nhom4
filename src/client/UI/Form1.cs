@@ -8,6 +8,10 @@ namespace CoTuongOnline.Client
 {
     public partial class Form1 : Form
     {
+        private TextBox txtStatus;
+        private Point? selectedCell = null; // ô đang chọn
+        private List<Point> validMoves = new List<Point>(); // ô có thể đi
+        private bool myTurn = true; // lượt chơi (test trước)
         //  Cấu hình bàn cờ 
         private const int Cell = 60;  // kích thước 1 ô (px)
         private const int StartX = 30;  // lề trái
@@ -16,9 +20,32 @@ namespace CoTuongOnline.Client
 
         private readonly Dictionary<string, Image> _pieces = new Dictionary<string, Image>();
 
+        private bool HasPieceAt(int col, int row)
+        {
+            // Quân đen
+            if (row == 0 && (col == 0 || col == 1 || col == 2 || col == 3 || col == 4 || col == 5 || col == 6 || col == 7 || col == 8))
+                return true;
+
+            if (row == 2 && (col == 1 || col == 7)) return true;
+
+            if (row == 3 && (col % 2 == 0)) return true;
+
+            // Quân đỏ
+            if (row == 9 && (col == 0 || col == 1 || col == 2 || col == 3 || col == 4 || col == 5 || col == 6 || col == 7 || col == 8))
+                return true;
+
+            if (row == 7 && (col == 1 || col == 7)) return true;
+
+            if (row == 6 && (col % 2 == 0)) return true;
+
+            return false;
+        }
+
         public Form1()
         {
             InitializeComponent();
+
+            this.MouseClick += Form1_MouseClick;
 
             this.ClientSize = new Size(StartX * 2 + 8 * Cell + 200,
                                             StartY * 2 + 9 * Cell);
@@ -72,6 +99,21 @@ namespace CoTuongOnline.Client
                         StartX + j * Cell, StartY + 5 * Cell,
                         StartX + j * Cell, StartY + 9 * Cell);
                 }
+
+                foreach (var p in validMoves)
+                {
+                    int cx = StartX + p.X * Cell;
+                    int cy = StartY + p.Y * Cell;
+
+                    int dotSize = 20;
+
+                    g.FillEllipse(new SolidBrush(Color.Green),
+                        cx - dotSize / 2,
+                        cy - dotSize / 2,
+                        dotSize,
+                        dotSize);
+                }
+
             }
 
             // Cung điện trên (hàng 0-2) và dưới (hàng 7-9)
@@ -93,9 +135,9 @@ namespace CoTuongOnline.Client
             // Chữ sông
             Font fontRiver = new Font("SimSun", 24, FontStyle.Bold);
             g.DrawString("楚河", fontRiver, Brushes.DarkRed,
-                         StartX + 0.8f * Cell, StartY + 4.15f * Cell);
+                         StartX + 1.4f * Cell, StartY + 4.15f * Cell);
             g.DrawString("漢界", fontRiver, Brushes.DarkRed,
-                         StartX + 4.8f * Cell, StartY + 4.15f * Cell);
+                         StartX + 5.3f * Cell, StartY + 4.15f * Cell);
 
             //  Quân ĐEN (hàng 0-3, phía trên) 
             DrawPiece(g, "vua_den", 4, 0);
@@ -218,8 +260,23 @@ namespace CoTuongOnline.Client
         //  LOAD FORM – nút Thách Đấu & Thoát
         private void Form1_Load(object sender, EventArgs e)
         {
-            int btnX = StartX * 2 + 8 * Cell + 25;
+            int btnX = StartX * 2 + 8 * Cell + 10;
             int formH = StartY * 2 + 9 * Cell;
+
+            txtStatus = new TextBox
+            {
+                Text = "Đến Lượt Bạn",
+                Location = new Point(StartX * 2 + 8 * Cell + 10, 25),
+                Size = new Size(150, 100),
+                Font = new Font("Arial", 15, FontStyle.Bold),
+
+                ReadOnly = true,          // 👈 không cho nhập
+                TextAlign = HorizontalAlignment.Center,
+                BorderStyle = BorderStyle.FixedSingle,
+                BackColor = Color.White
+            };
+            txtStatus.TabStop = false;
+            this.Controls.Add(txtStatus);
 
             Button btnThachDau = new Button
             {
@@ -244,6 +301,44 @@ namespace CoTuongOnline.Client
             };
             btnThoat.Click += (s, ev) => Application.Exit();
             this.Controls.Add(btnThoat);
+
+        }
+        private void Form1_MouseClick(object sender, MouseEventArgs e)
+        {
+            int col = (e.X - StartX + Cell / 2) / Cell;
+            int row = (e.Y - StartY + Cell / 2) / Cell;
+
+            if (col < 0 || col > 8 || row < 0 || row > 9) return;
+
+            // 👇 BƯỚC 2 NẰM Ở ĐÂY
+            if (!HasPieceAt(col, row))
+            {
+                selectedCell = null;
+                validMoves.Clear();
+                this.Invalidate();
+                return;
+
+            }
+            void AddMoveIfValid(int c, int r)
+            {
+                if (c >= 0 && c <= 8 && r >= 0 && r <= 9)
+                    validMoves.Add(new Point(c, r));
+            }
+
+            // dùng:
+            validMoves.Clear();
+
+            AddMoveIfValid(col + 1, row);
+            AddMoveIfValid(col - 1, row);
+            AddMoveIfValid(col, row + 1);
+            AddMoveIfValid(col, row - 1);
+
+            myTurn = !myTurn;
+
+            txtStatus.Text = myTurn ? "Đến Lượt Bạn" : "Đang Chờ Đối Thủ...";
+            txtStatus.ForeColor = myTurn ? Color.DarkGreen : Color.Gray;
+
+            this.Invalidate();
         }
     }
 }

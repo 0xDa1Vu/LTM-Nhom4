@@ -15,14 +15,18 @@
 
         private void InitializeComponent()
         {
-            this.SuspendLayout();
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(600, 450);
-            this.Name = "Form1";
-            this.Text = "Cờ Tướng Online";
-            this.Load += new System.EventHandler(this.Form1_Load);
-            this.ResumeLayout(false);
+            SuspendLayout();
+            // 
+            // Form1
+            // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(686, 600);
+            Margin = new Padding(3, 4, 3, 4);
+            Name = "Form1";
+            Text = "Cờ Tướng Online";
+            Load += Form1_Load;
+            ResumeLayout(false);
         }
     }
 }
