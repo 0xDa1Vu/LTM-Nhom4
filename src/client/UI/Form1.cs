@@ -99,21 +99,17 @@ namespace CoTuongOnline.Client
                         StartX + j * Cell, StartY + 5 * Cell,
                         StartX + j * Cell, StartY + 9 * Cell);
                 }
+            }
 
-                foreach (var p in validMoves)
-                {
-                    int cx = StartX + p.X * Cell;
-                    int cy = StartY + p.Y * Cell;
-
-                    int dotSize = 20;
-
-                    g.FillEllipse(new SolidBrush(Color.Green),
-                        cx - dotSize / 2,
-                        cy - dotSize / 2,
-                        dotSize,
-                        dotSize);
-                }
-
+            foreach (var p in validMoves)
+            {
+                int cx = StartX + p.X * Cell;
+                int cy = StartY + p.Y * Cell;
+                int dotSize = 20;
+                g.FillEllipse(new SolidBrush(Color.Green),
+                    cx - dotSize / 2,
+                    cy - dotSize / 2,
+                    dotSize, dotSize);
             }
 
             // Cung điện trên (hàng 0-2) và dưới (hàng 7-9)
