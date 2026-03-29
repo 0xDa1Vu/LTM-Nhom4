@@ -37,7 +37,6 @@ namespace ChessServer
                 // Đa luồng (Multi-threading)
                 // Ném ông khách này sang một luồng (Task) khác để nhân viên phục vụ, 
                 // còn Server quay lại dòng while(true) để đón khách tiếp theo lập tức.
-                Task.Run(() => handler.Process());
             }
         }
     }
