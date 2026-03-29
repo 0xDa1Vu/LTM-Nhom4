@@ -163,6 +163,42 @@ namespace CoTuongOnline.Logic
             if (!InPalace(p.IsRed, tr, tc))
                 return false;
 
+            // Kiểm tra 2 tướng không được nhìn thẳng nhau (cùng cột, không có quân chắn)
+            if (fc == tc)
+            {
+                // Tìm tướng đối phương
+                int opponentRow = -1;
+                for (int r = 0; r < 10; r++)
+                {
+                    var piece = board.grid[r, tc];
+                    if (piece != null && piece.Type == PieceType.General && piece.IsRed != p.IsRed)
+                    {
+                        opponentRow = r;
+                        break;
+                    }
+                }
+
+                if (opponentRow != -1)
+                {
+                    // Kiểm tra có quân nào chắn giữa 2 tướng không
+                    int minRow = Math.Min(tr, opponentRow) + 1;
+                    int maxRow = Math.Max(tr, opponentRow);
+                    bool hasBlocker = false;
+
+                    for (int r = minRow; r < maxRow; r++)
+                    {
+                        if (board.grid[r, tc] != null)
+                        {
+                            hasBlocker = true;
+                            break;
+                        }
+                    }
+
+                    // Nếu không có quân chắn → 2 tướng nhìn nhau → không hợp lệ
+                    if (!hasBlocker) return false;
+                }
+            }
+
             return true;
         }
 
