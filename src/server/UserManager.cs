@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ChessServer
+namespace Server
 {
     public class User
 {
