@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace Server
+namespace ChessServer
 {
     public class ChatHandler
     {
