@@ -5,5 +5,9 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 	</PropertyGroup>
+	<ItemGroup>
+		<Compile Include="..\common\Protocol_v2.cs" Link="Network\Protocol.cs" />
+	</ItemGroup>
 </Project>
