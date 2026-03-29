@@ -4,20 +4,27 @@ using System.Text;
 
 namespace CoTuongOnline.Network
 {
-    // Enum mã lệnh
     public enum PacketType : byte
     {
-        Login = 10, LoginOK = 11, LoginFail = 12,
-        Logout = 20,
-        Move = 30, MoveOK = 31, MoveFail = 32,
-        Chat = 40,
+        // Auth
+        Login = 10, LoginOK = 11, LoginFail = 12, Logout = 20,
+        
+        // Game
+        Ready = 30,        // Sẵn sàng chơi
+        Move = 31,         // Di chuyển: "x1,y1,x2,y2"
+        Surrender = 32,    // Đầu hàng
+        Chat = 33,         // Chat: "message"
+        
+        // Response
+        ReadyOK = 40, MoveOK = 41, MoveFail = 42,
+        SurrenderOK = 43,
+        
         GameStart = 50, GameEnd = 60,
         Heartbeat = 99
     }
 
-    // Header gói tin (5 bytes)
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct PacketHeader
+public struct PacketHeader
     {
         public PacketType Type;
         public int Length;
@@ -27,56 +34,38 @@ namespace CoTuongOnline.Network
     {
         private const int HEADER_SIZE = 5;
 
-        // Tạo gói tin Move: "x1,y1,x2,y2"
-        public static byte[] CreateMove(int x1, int y1, int x2, int y2)
-        {
-            string data = $"{x1},{y1},{x2},{y2}";
-            return CreatePacket(PacketType.Move, data);
-        }
+        // Tạo gói tin
+        public static byte[] CreateReady() => CreatePacket(PacketType.Ready, "");
+        public static byte[] CreateMove(int x1, int y1, int x2, int y2) => CreatePacket(PacketType.Move, $"{x1},{y1},{x2},{y2}");
+        public static byte[] CreateSurrender() => CreatePacket(PacketType.Surrender, "");
+        public static byte[] CreateChat(string message) => CreatePacket(PacketType.Chat, message);
 
-        // Tạo gói tin Chat
-        public static byte[] CreateChat(string message)
-        {
-            return CreatePacket(PacketType.Chat, message);
-        }
-
-        // Tạo gói tin chung
         private static byte[] CreatePacket(PacketType type, string data)
         {
             byte[] dataBytes = Encoding.UTF8.GetBytes(data);
-            PacketHeader header = new PacketHeader { Type = type, Length = dataBytes.Length };
+            PacketHeader header = new() { Type = type, Length = dataBytes.Length };
             
             byte[] headerBytes = StructToBytes(header);
             byte[] packet = new byte[HEADER_SIZE + dataBytes.Length];
             
-            Array.Copy(headerBytes, 0, packet, 0, HEADER_SIZE);
+            Array.Copy(headerBytes, packet, HEADER_SIZE);
             Array.Copy(dataBytes, 0, packet, HEADER_SIZE, dataBytes.Length);
-            
             return packet;
         }
 
-        // Đọc loại gói tin
-        public static PacketType ReadType(byte[] buffer)
-        {
-            if (buffer.Length < HEADER_SIZE) return PacketType.Heartbeat;
-            return BytesToStruct<PacketHeader>(buffer).Type;
-        }
-
-        // Đọc dữ liệu gói tin
+        // Đọc gói tin
+        public static PacketType ReadType(byte[] buffer) => buffer.Length < HEADER_SIZE ? PacketType.Heartbeat : BytesToStruct<PacketHeader>(buffer).Type;
         public static string ReadData(byte[] buffer)
-        {
-            if (buffer == null || buffer.Length < HEADER_SIZE)
-                throw new ArgumentException("Buffer không hợp lệ hoặc quá ngắn.");
+{
+    if (buffer == null || buffer.Length < HEADER_SIZE)
+        throw new ArgumentException("Buffer không hợp lệ.");
+    var header = BytesToStruct<PacketHeader>(buffer);
+    if (buffer.Length < HEADER_SIZE + header.Length)
+        throw new ArgumentException("Buffer không đủ dữ liệu.");
+    return Encoding.UTF8.GetString(buffer, HEADER_SIZE, header.Length);
+}
 
-            PacketHeader header = BytesToStruct<PacketHeader>(buffer);
-
-            if (buffer.Length < HEADER_SIZE + header.Length)
-                throw new ArgumentException("Buffer không đủ dữ liệu.");
-
-            return Encoding.UTF8.GetString(buffer, HEADER_SIZE, header.Length);
-        }
-
-        // Struct <-> Bytes
+        // Helper
         private static byte[] StructToBytes<T>(T data) where T : struct
         {
             int size = Marshal.SizeOf(data);

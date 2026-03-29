@@ -4,7 +4,7 @@ using System.Timers;
 using System.Threading;
 
 
-namespace CoTuongOnline.Network
+namespace CoTuongOnline.Common
 {
     public enum TimerState { Stopped, Running, Paused }
 
@@ -74,6 +74,19 @@ namespace CoTuongOnline.Network
             _state = TimerState.Stopped; _gameTimer.Stop(); _countdownTimer.Stop();
             _gameTimeMs = 0; _countdownSeconds = 30;
         }
+
+        public void Pause()
+        {
+            if (_state == TimerState.Running)
+            {
+                _state = TimerState.Paused;
+                _gameTimer.Stop();
+                StopCountdown();
+            }
+        }
+
+        public List<NuocDi> GetLichSu() => new List<NuocDi>(_lichSu);
+
         public void Dispose()
 {
     StopAll();
