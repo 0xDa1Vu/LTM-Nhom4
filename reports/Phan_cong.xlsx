@@ -21,3 +21,13 @@ STT	Thành viên	Vai trò	Nhiệm vụ chi tiết (Cần hoàn thành & Commit l
 5	Nguyễn Minh Nhựt	Protocol & Timer	2. Hoàn thiện đồng hồ đếm ngược (Countdown Timer) cho mỗi lượt đi. 2. Định nghĩa đầy đủ bộ mã lệnh: MOVE, CHAT, SURRENDER, READY.	GameTimer.cs, ProtocolEnums.cs
 6	Ngô Hoàng Hiếu	Logic & Security	2. Viết hệ thống Đăng nhập (Username) và Quản lý danh sách User Online. 2. Code tính năng Chat giữa 2 người chơi và bộ lọc tin nhắn (Spam filter).	UserManager.cs, ChatHandler.cs
 				
+===============
+NHIỆM VỤ TUẦN 3
+===============
+STT	Thành viên	Vai trò	Nhiệm vụ "Về Đích" (Hoàn thành 100% Code)	Sản phẩm cuối cùng
+1	Nguyễn Trọng Nhân	Leader/Server	3. Quay & Dựng Video Demo toàn bộ tính năng. Tối ưu Server.	Server ổn định 24/7
+2	Mai Vũ Đại Vũ	Network	3. Xử lý Auto-reconnect & Kết hợp với Hiếu làm Login.	ConnectionGuard.cs
+3	Lý Đình Bảo	GUI	3. Âm thanh, Menu chính, màn hình Thắng/Thua.	Giao diện hoàn chỉnh
+4	Lý Gia Bảo	Game Logic	3. Fix lỗi logic di chuyển & các trường hợp đặc biệt.	FinalLogic.cs
+5	Nguyễn Minh Nhựt	Timer/Protocol	3. Đồng bộ Timer & Kết hợp với Hiếu làm Giao thức Chat.	GameTimer.cs
+6	Ngô Hoàng Hiếu	Logic/Security	3. Code chung: Chat, Login & Chạy Stress Test hệ thống.	ChatHandler.cs
