@@ -56,7 +56,7 @@ namespace CoTuongOnline.Common
         public void ThemNuocDi(int x1, int y1, int x2, int y2, string quanAn = "")
         {
             string moTa = $"({x1},{y1})->({x2},{y2})" + (quanAn != "" ? $" [Ăn {quanAn}]" : "");
-            var nuocDi = new(DateTime.Now, moTa, new[] { x1, y1 }, new[] { x2, y2 }, quanAn);
+            var nuocDi = new NuocDi(DateTime.Now, moTa, new[] { x1, y1 }, new[] { x2, y2 }, quanAn);
             _lichSu.Add(nuocDi); NuocDiAdded?.Invoke(nuocDi);
         }
 
