@@ -23,19 +23,19 @@ namespace ChessServer
             _roomId = Guid.NewGuid().ToString()[..8];
         }
 
-        public void Start()
+        public async Task StartAsync()
         {
             Logger.WriteLog($"[ROOM {_roomId}] Ván đấu bắt đầu!");
 
-            // Báo 2 người chơi biết ván đấu bắt đầu và vai trò của họ
+            // Thông báo vai trò cho 2 người chơi
             RoomManager.SendMessage(_player1, "START|RED");
             RoomManager.SendMessage(_player2, "START|BLACK");
 
-            // Chạy 2 luồng lắng nghe song song
+            // Chạy 2 luồng lắng nghe song song, await thay vì WaitAll để không block
             Task t1 = Task.Run(() => ListenFrom(_player1, _player2, "Đỏ"));
             Task t2 = Task.Run(() => ListenFrom(_player2, _player1, "Đen"));
 
-            Task.WaitAll(t1, t2);
+            await Task.WhenAll(t1, t2);
 
             Logger.WriteLog($"[ROOM {_roomId}] Ván đấu kết thúc.");
         }
