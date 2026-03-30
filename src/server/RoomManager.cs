@@ -45,15 +45,25 @@ namespace ChessServer
 					TcpClient player2 = client;
 					_waitingClient = null;
 
-					// Tạo phòng mới
-					GameRoom room = new GameRoom(player1, player2);
-					_rooms.Add(room);
+                    // Tạo phòng mới
+                    GameRoom room = new GameRoom(player1, player2);
+                    _rooms.Add(room);
 
-					Logger.WriteLog($"[ROOM] Ghép cặp thành công! Phòng #{_rooms.Count} bắt đầu.");
+                    Logger.WriteLog($"[ROOM] Ghép cặp thành công! Phòng #{_rooms.Count} bắt đầu.");
 
-					// Chạy phòng trên luồng riêng
-					Task.Run(() => room.Start());
-				}
+                    // Chạy phòng async, khi xong tự xóa khỏi danh sách để tránh memory leak
+                    Task.Run(async () =>
+                    {
+                        await room.StartAsync();
+
+                        // Phòng kết thúc → xóa khỏi danh sách
+                        lock (_lock)
+                        {
+                            _rooms.Remove(room);
+                            Logger.WriteLog($"[ROOM] Đã giải phóng phòng. Còn {_rooms.Count} phòng đang chạy.");
+                        }
+                    });
+                }
 			}
 		}
 
