@@ -23,7 +23,7 @@ namespace CoTuongOnline.Common
 
     public class GameTimer : IDisposable
     {
-        private Timer _gameTimer = new(100), _countdownTimer = new(1000);
+        private System.Timers.Timer _gameTimer = new(100), _countdownTimer = new(1000);
         private long _gameTimeMs;
         private int _countdownSeconds = 30;
         private bool _countdownRunning;
