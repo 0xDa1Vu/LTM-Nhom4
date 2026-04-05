@@ -5,7 +5,7 @@ namespace CoTuongOnline.Logic
 {
     public static class MoveValidator
     {
-        // 🔥 TÌM VỊ TRÍ THẬT CỦA QUÂN TRÊN BOARD
+        //  TÌM VỊ TRÍ THẬT CỦA QUÂN TRÊN BOARD
         private static (int row, int col) FindPiece(Board board, Piece piece)
         {
             for (int i = 0; i < 10; i++)
