@@ -6,7 +6,6 @@ namespace CoTuongGame
 {
     public enum TimerState { Stopped, Running, Paused }
 
-    // Lưu 1 nước đi
     public class NuocDi
     {
         public DateTime Time;
@@ -22,47 +21,142 @@ namespace CoTuongGame
 
     public class GameTimer
     {
-        private System.Timers.Timer _timer;
-        private long _timeMs;
-        private TimerState _state;
-        private List<NuocDi> _lichSu;
+        public int PlayerId { get; set; } = 1;
 
-        public event Action<long> TimeChanged;
-        public event Action<NuocDi> NuocDiAdded;
+        private readonly Timer gameTimer = new(100);
+        private readonly Timer turnTimer = new(1000);
 
-        public long TimeMs => _timeMs;
-        public TimerState State => _state;
-        public int SoNuocDi => _lichSu.Count;
+        private long gameTime;
+        private int turnTime = 30;
+
+        private readonly List<NuocDi> history = new();
+
+        public event Action<long> GameTimeChanged;
+        public event Action<int> CountdownChanged;
+        public event Action CountdownEnd;
+        public event Action<NuocDi> MoveAdded;
+        public event Action<int> TurnChanged;
+
+        public long GameTime => gameTime;
+        public int TurnTime => turnTime;
+        public TimerState State { get; private set; }
 
         public GameTimer()
         {
-            _timer = new System.Timers.Timer(100);
-            _timer.Elapsed += (s, e) => { _timeMs += 100; TimeChanged?.Invoke(_timeMs); };
-            _lichSu = new List<NuocDi>();
-            _state = TimerState.Stopped;
+            gameTimer.Elapsed += (_, _) =>
+            {
+                gameTime += 100;
+                GameTimeChanged?.Invoke(gameTime);
+            };
+
+            turnTimer.Elapsed += (_, _) => Tick();
         }
 
-        // Điều khiển timer
-        public void Start() { if (_state != TimerState.Running) { _state = TimerState.Running; _timer.Start(); } }
-        public void Pause() { if (_state == TimerState.Running) { _state = TimerState.Paused; _timer.Stop(); } }
-        public void Stop() { _state = TimerState.Stopped; _timer.Stop(); _timeMs = 0; TimeChanged?.Invoke(0); }
-
-        // Quản lý nước đi
-        public void ThemNuocDi(int x1, int y1, int x2, int y2, string quanAn = "")
+        //GAME
+        public void Start()
         {
-            string moTa = $"({x1},{y1})->({x2},{y2})";
-            if (!string.IsNullOrEmpty(quanAn)) moTa += $" [Ăn {quanAn}]";
-            
-            var nuocDi = new NuocDi(DateTime.Now, moTa, new[] { x1, y1 }, new[] { x2, y2 }, quanAn);
-            _lichSu.Add(nuocDi);
-            NuocDiAdded?.Invoke(nuocDi);
+            State = TimerState.Running;
+            gameTimer.Start();
+            StartTurn();
         }
 
-        public void Undo() 
+        public void Pause()
         {
-            if (_lichSu.Count > 0) _lichSu.RemoveAt(_lichSu.Count - 1);
+            if (State != TimerState.Running) return;
+            State = TimerState.Paused;
+            gameTimer.Stop();
+            turnTimer.Stop();
         }
 
-        public List<NuocDi> GetLichSu() => new List<NuocDi>(_lichSu);
+        public void Resume()
+        {
+            if (State != TimerState.Paused) return;
+            State = TimerState.Running;
+            gameTimer.Start();
+            turnTimer.Start();
+        }
+
+        public void Stop()
+        {
+            State = TimerState.Stopped;
+            gameTimer.Stop();
+            turnTimer.Stop();
+        }
+
+        public void Reset()
+        {
+            Stop();
+            gameTime = 0;
+            turnTime = 30;
+            history.Clear();
+
+            GameTimeChanged?.Invoke(gameTime);
+            CountdownChanged?.Invoke(turnTime);
+        }
+
+        // luot di
+        public void StartTurn()
+        {
+            turnTimer.Stop();
+            turnTime = 30;
+            turnTimer.Start();
+            CountdownChanged?.Invoke(turnTime);
+        }
+
+        public void StopTurn() => turnTimer.Stop();
+
+        public bool MyTurn(int id)
+        {
+            bool mine = PlayerId == id;
+            if (mine) StartTurn();
+            else StopTurn();
+
+            TurnChanged?.Invoke(id);
+            return mine;
+        }
+
+        private void Tick()
+        {
+            if (--turnTime > 0)
+                CountdownChanged?.Invoke(turnTime);
+            else
+            {
+                turnTimer.Stop();
+                CountdownEnd?.Invoke();
+            }
+        }
+
+        //SYNC
+        public void SyncTime(long ms)
+        {
+            gameTime = ms;
+            GameTimeChanged?.Invoke(ms);
+        }
+
+        public void SyncCountdown(int sec)
+        {
+            turnTime = sec;
+            CountdownChanged?.Invoke(sec);
+            if (sec > 0) turnTimer.Start();
+        }
+
+        // lichsu
+        public void AddMove(int x1, int y1, int x2, int y2, string eat = "")
+        {
+            string text = $"({x1},{y1})->({x2},{y2})" + (eat != "" ? $" [Ăn {eat}]" : "");
+
+            var move = new NuocDi(DateTime.Now, text, new[] { x1, y1 }, new[] { x2, y2 }, eat);
+            history.Add(move);
+
+            MoveAdded?.Invoke(move);
+        }
+
+        public void Undo()
+        {
+            if (history.Count > 0)
+                history.RemoveAt(history.Count - 1);
+        }
+
+        public List<NuocDi> GetHistory() => history;
     }
 }
