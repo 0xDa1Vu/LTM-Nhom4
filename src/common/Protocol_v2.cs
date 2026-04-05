@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace CoTuongGame.Network
+namespace CoTuongOnline.Network
 {
     public enum PacketType : byte
     {
@@ -23,7 +23,8 @@ namespace CoTuongGame.Network
         Heartbeat = 99
     }
 
-    public struct PacketHeader
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct PacketHeader
     {
         public PacketType Type;
         public int Length;
@@ -55,10 +56,14 @@ namespace CoTuongGame.Network
         // Đọc gói tin
         public static PacketType ReadType(byte[] buffer) => buffer.Length < HEADER_SIZE ? PacketType.Heartbeat : BytesToStruct<PacketHeader>(buffer).Type;
         public static string ReadData(byte[] buffer)
-        {
-            var header = BytesToStruct<PacketHeader>(buffer);
-            return Encoding.UTF8.GetString(buffer, HEADER_SIZE, header.Length);
-        }
+{
+    if (buffer == null || buffer.Length < HEADER_SIZE)
+        throw new ArgumentException("Buffer không hợp lệ.");
+    var header = BytesToStruct<PacketHeader>(buffer);
+    if (buffer.Length < HEADER_SIZE + header.Length)
+        throw new ArgumentException("Buffer không đủ dữ liệu.");
+    return Encoding.UTF8.GetString(buffer, HEADER_SIZE, header.Length);
+}
 
         // Helper
         private static byte[] StructToBytes<T>(T data) where T : struct

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Timers;
+using System.Threading;
 
-namespace CoTuongGame
+
+namespace CoTuongOnline.Network
 {
     public enum TimerState { Stopped, Running, Paused }
 
@@ -19,7 +21,7 @@ namespace CoTuongGame
         }
     }
 
-    public class GameTimer
+    public class GameTimer : IDisposable
     {
         private Timer _gameTimer = new(100), _countdownTimer = new(1000);
         private long _gameTimeMs;
@@ -40,7 +42,10 @@ namespace CoTuongGame
 
         public GameTimer()
         {
-            _gameTimer.Elapsed += (s, e) => { _gameTimeMs += 100; GameTimeChanged?.Invoke(_gameTimeMs); };
+            _gameTimer.Elapsed += (s, e) => { 
+    Interlocked.Add(ref _gameTimeMs, 100); 
+    GameTimeChanged?.Invoke(_gameTimeMs); 
+};
             _countdownTimer.Elapsed += OnCountdownTick;
         }
 
@@ -69,5 +74,11 @@ namespace CoTuongGame
             _state = TimerState.Stopped; _gameTimer.Stop(); _countdownTimer.Stop();
             _gameTimeMs = 0; _countdownSeconds = 30;
         }
+        public void Dispose()
+{
+    StopAll();
+    _gameTimer.Dispose();
+    _countdownTimer.Dispose();
+}
     }
 }
