@@ -2,44 +2,33 @@ using System;
 
 namespace CoTuongOnline.Common
 {
-    // Enum dùng để định nghĩa các loại quân cờ (giống như 1 danh sách cố định)
+    // Các loại quân cờ
     public enum PieceType
     {
-        General,   // Tướng
-        Advisor,   // Sĩ
-        Elephant,  // Tượng
-        Horse,     // Mã
-        Rook,      // Xe
-        Cannon,    // Pháo
-        Soldier    // Tốt
+        General, Advisor, Elephant, Horse, Rook, Cannon, Soldier
     }
 
-    // Lớp đại diện cho 1 quân cờ
+    // Lớp quân cờ
     public class Piece
     {
-        public PieceType Type; // Loại quân (Xe, Mã, Tướng...)
-        public bool IsRed;     // Màu quân: true = đỏ, false = đen
-        public int Row;        // Vị trí hàng (0 → 9)
-        public int Col;        // Vị trí cột (0 → 8)
+        public PieceType Type; // loại quân
+        public bool IsRed;     // đỏ hay đen
+        public int Row;        // vị trí hàng
+        public int Col;        // vị trí cột
 
-        // Constructor: dùng để tạo 1 quân cờ mới
+        // Constructor
         public Piece(PieceType type, bool isRed, int row, int col)
         {
-            // Gán loại quân
             Type = type;
-
-            // Gán màu quân
             IsRed = isRed;
-
-            // Gán vị trí ban đầu
             Row = row;
             Col = col;
         }
 
-        // Hàm này dùng khi bạn in object ra (Console.WriteLine)
+        // Debug hiển thị
         public override string ToString()
         {
-            // Trả về chuỗi mô tả quân cờ
-            // Ví dụ: "Rook (Red) [9,0]"
             return $"{Type} ({(IsRed ? "Red" : "Black")}) [{Row},{Col}]";
         }
+    }
+}
