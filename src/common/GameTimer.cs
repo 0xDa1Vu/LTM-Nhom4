@@ -4,7 +4,7 @@ using System.Timers;
 using System.Threading;
 
 
-namespace CoTuongOnline.Network
+namespace CoTuongOnline.Common
 {
     public enum TimerState { Stopped, Running, Paused }
 
@@ -23,7 +23,7 @@ namespace CoTuongOnline.Network
 
     public class GameTimer : IDisposable
     {
-        private Timer _gameTimer = new(100), _countdownTimer = new(1000);
+        private System.Timers.Timer _gameTimer = new(100), _countdownTimer = new(1000);
         private long _gameTimeMs;
         private int _countdownSeconds = 30;
         private bool _countdownRunning;
@@ -56,7 +56,7 @@ namespace CoTuongOnline.Network
         public void ThemNuocDi(int x1, int y1, int x2, int y2, string quanAn = "")
         {
             string moTa = $"({x1},{y1})->({x2},{y2})" + (quanAn != "" ? $" [Ăn {quanAn}]" : "");
-            var nuocDi = new(DateTime.Now, moTa, new[] { x1, y1 }, new[] { x2, y2 }, quanAn);
+            var nuocDi = new NuocDi(DateTime.Now, moTa, new[] { x1, y1 }, new[] { x2, y2 }, quanAn);
             _lichSu.Add(nuocDi); NuocDiAdded?.Invoke(nuocDi);
         }
 
@@ -74,6 +74,19 @@ namespace CoTuongOnline.Network
             _state = TimerState.Stopped; _gameTimer.Stop(); _countdownTimer.Stop();
             _gameTimeMs = 0; _countdownSeconds = 30;
         }
+
+        public void Pause()
+        {
+            if (_state == TimerState.Running)
+            {
+                _state = TimerState.Paused;
+                _gameTimer.Stop();
+                StopCountdown();
+            }
+        }
+
+        public List<NuocDi> GetLichSu() => new List<NuocDi>(_lichSu);
+
         public void Dispose()
 {
     StopAll();
