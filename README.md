@@ -80,7 +80,7 @@ ChessGame_Online/
 │   │   ├── Logger.cs             # Ghi log ra console và file
 │   │   └── Server.csproj
 │   │
-│   ├── client/                   # Code phía Client
+│   ├── client/                   # Giao diện bàn cờ WinForms (chạy cục bộ)
 │   │   ├── UI/
 │   │   │   ├── Form1.cs          # Giao diện bàn cờ chính
 │   │   │   ├── FormMenu.cs       # Menu chính
@@ -104,7 +104,7 @@ ChessGame_Online/
 │   │   ├── FinalLogic.cs         # Logic nước đi hoàn chỉnh
 │   │   └── GameTimer.cs          # Đồng hồ đếm ngược
 │   │
-│   └── test/NetworkTest/         # Test kết nối TCP độc lập
+│   └── test/NetworkTest/         # Client kết nối mạng thật — dùng để test với Server
 │
 ├── assets/images/                # Ảnh quân cờ PNG (32 quân)
 ├── assets/sounds/                # Âm thanh move.wav, capture.wav
@@ -138,6 +138,8 @@ cd LTM-Nhom4
 
 ### Bước 2 — Khởi động Server
 
+Mở **Terminal 1**, chạy:
+
 ```bash
 cd src/server
 dotnet run
@@ -152,22 +154,43 @@ Nhấn Enter để khởi động Server...
 [dd/MM/yyyy HH:mm:ss] === SERVER CỜ TƯỚNG ĐÃ MỞ TẠI CỔNG 54000 ===
 ```
 
-### Bước 3 — Khởi động Client (mỗi người chơi chạy trên máy của mình)
+### Bước 3 — Người chơi kết nối vào Server
+
+Mỗi người chơi mở **Terminal riêng**, chạy:
+
+```bash
+cd src/test/NetworkTest
+dotnet run
+```
+
+Nhập IP của máy chạy Server khi được hỏi:
+- Cùng máy (localhost): nhấn **Enter** (mặc định `127.0.0.1`)
+- Qua LAN: nhập IP của máy chạy server, ví dụ `192.168.1.5`
+
+> Tìm IP máy server bằng lệnh: `ipconfig` → xem dòng **IPv4 Address**
+
+Server sẽ hiện log ghép cặp:
+```
+[ROOM] Người chơi đang chờ đối thủ...
+[ROOM] Ghép cặp thành công! Phòng #1 bắt đầu.
+```
+
+### Bước 4 — Xem giao diện bàn cờ (chạy độc lập)
 
 ```bash
 cd src/client
 dotnet run
 ```
 
-> **Lưu ý:** Nếu chơi qua LAN, người chơi 2 cần biết **địa chỉ IP** của máy chạy Server.  
-> Tìm IP bằng lệnh: `ipconfig` → xem dòng **IPv4 Address**
+> **Lưu ý:** `src/client` hiển thị giao diện bàn cờ WinForms để chơi cờ cục bộ trên cùng máy.  
+> Kết nối mạng thật được thực hiện qua `src/test/NetworkTest`.
 
-### Bước 4 — Bắt đầu chơi
+### Bước 5 — Bắt đầu chơi
 
-1. Cả 2 người bấm **"Thách Đấu"**
-2. Server tự động ghép cặp
-3. Người được gán quân **Đỏ** đi trước
-4. Mỗi lượt có **30 giây** để đi — hết giờ thua
+1. **2 người** cùng chạy `NetworkTest` và kết nối vào cùng 1 server
+2. Server tự ghép cặp: người vào trước → quân **Đỏ** (đi trước), người vào sau → quân **Đen**
+3. Nhập nước đi theo định dạng hoặc dùng giao diện bàn cờ
+4. Mỗi lượt có **30 giây** — hết giờ thua
 
 ---
 
@@ -221,9 +244,9 @@ Mỗi gói tin gồm **Header 5 byte** + **Payload**:
 - Kết quả: `=== STRESS TEST END ===` — không crash
 
 ### Test kết nối TCP
-- Server ↔ Client trên cùng máy (localhost): ✅
-- Server ↔ Client qua LAN: ✅
+- Server ↔ NetworkTest trên cùng máy (localhost): ✅
 - Ghép cặp 2 người chơi tự động: ✅
+- Stress test ChatHandler (50 user, 1000 tin nhắn): ✅
 
 ---
 
