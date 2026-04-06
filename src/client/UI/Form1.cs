@@ -300,46 +300,36 @@ namespace CoTuongOnline.Client
 
         }
         private void Form1_MouseClick(object sender, MouseEventArgs e)
-
         {
-            ShowGameResult(true);
-
             int col = (e.X - StartX + Cell / 2) / Cell;
             int row = (e.Y - StartY + Cell / 2) / Cell;
 
             if (col < 0 || col > 8 || row < 0 || row > 9) return;
 
-            // 👇 BƯỚC 2 NẰM Ở ĐÂY
             if (!HasPieceAt(col, row))
             {
-                SoundManager.PlayMove();
-
                 selectedCell = null;
                 validMoves.Clear();
                 this.Invalidate();
                 return;
+            }
 
-            }
-            {
-                SoundManager.PlayCapture();
-            
-            }
+            // Có quân → phát âm + hiện nước đi hợp lệ
+            SoundManager.PlayMove();
+
             void AddMoveIfValid(int c, int r)
             {
                 if (c >= 0 && c <= 8 && r >= 0 && r <= 9)
                     validMoves.Add(new Point(c, r));
             }
 
-            // dùng:
             validMoves.Clear();
-
             AddMoveIfValid(col + 1, row);
             AddMoveIfValid(col - 1, row);
             AddMoveIfValid(col, row + 1);
             AddMoveIfValid(col, row - 1);
 
             myTurn = !myTurn;
-
             txtStatus.Text = myTurn ? "Đến Lượt Bạn" : "Đang Chờ Đối Thủ...";
             txtStatus.ForeColor = myTurn ? Color.DarkGreen : Color.Gray;
 
