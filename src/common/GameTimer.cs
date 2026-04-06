@@ -49,8 +49,23 @@ namespace CoTuongOnline.Common
             _countdownTimer.Elapsed += OnCountdownTick;
         }
 
-        public void StartGame() { _state = TimerState.Running; _gameTimer.Start(); StartCountdown(); }
-        public void StartTurn() { _countdownSeconds = 30; StartCountdown(); CountdownChanged?.Invoke(30); }
+        public void StartGame()
+        {
+            _state = TimerState.Running;
+            _gameTimer.Start();
+            _countdownSeconds = 30;        
+            _countdownTimer.Stop();         
+            _countdownTimer.Start();
+            _countdownRunning = true;
+        }
+        public void StartTurn()
+        {
+            _countdownSeconds = 30;
+            _countdownTimer.Stop();        
+            _countdownTimer.Start();        
+            _countdownRunning = true;
+            CountdownChanged?.Invoke(30);
+        }
         public void StopCountdown() { _countdownRunning = false; _countdownTimer.Stop(); }
 
         public void ThemNuocDi(int x1, int y1, int x2, int y2, string quanAn = "")
