@@ -107,7 +107,7 @@ ChessGame_Online/
 │   └── test/NetworkTest/         # Client kết nối mạng thật — dùng để test với Server
 │
 ├── assets/images/                # Ảnh quân cờ PNG (32 quân)
-├── assets/sounds/                # Âm thanh move.wav, capture.wav
+├── sounds/                # Âm thanh move.wav, capture.wav
 ├── docs/
 │   ├── Bao_cao.docx              # Báo cáo Word
 │   └── Thuyet_trinh.pptx         # PowerPoint thuyết trình
