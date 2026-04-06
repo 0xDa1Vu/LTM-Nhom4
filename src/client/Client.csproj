@@ -8,8 +8,8 @@
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 	</PropertyGroup>
 	<ItemGroup>
-	  <None Remove="assets\sounds\capture.wav" />
-	  <None Remove="assets\sounds\move.wav" />
+		<None Remove="Sounds\capture.wav" />
+		<None Remove="Sounds\move.wav" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Include="..\common\Protocol.cs" />
@@ -18,14 +18,14 @@
 		<Compile Include="..\common\GameTimer.cs" />
 		<Compile Include="..\common\ChessRules.cs" />
 		<Compile Include="..\common\MoveValidator.cs" />
-	    <Compile Include="..\common\FinalLogic.cs" />
+		<Compile Include="..\common\FinalLogic.cs" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Content Include="assets\sounds\capture.wav">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="assets\sounds\move.wav">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
+		<Content Include="Sounds\capture.wav">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Sounds\move.wav">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 </Project>

@@ -5,7 +5,7 @@ namespace CoTuongOnline.Client
 {
     public static class SoundManager
     {
-        private static string basePath = Application.StartupPath + "\\assets\\sounds\\";
+        private static string basePath = Application.StartupPath + "\\Sounds\\";
 
         public static void PlayMove()
         {
