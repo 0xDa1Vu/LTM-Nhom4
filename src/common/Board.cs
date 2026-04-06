@@ -1,6 +1,6 @@
 using System;
 
-namespace CoTuongOnline.Common
+namespace CoTuongOnline.Common 
 {
     public class Board
     {
