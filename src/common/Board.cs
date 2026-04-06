@@ -1,7 +1,12 @@
 using System; 
 
 namespace CoTuongOnline.Common 
+<<<<<<< HEAD
+{
+    public class Board
+=======
     public class Board 
+>>>>>>> origin/main
     {
         // Khai báo mảng 2 chiều lưu bàn cờ
         // 10 hàng (Row) và 9 cột (Col) = 90 ô
