@@ -31,3 +31,14 @@ STT	Thành viên	Vai trò	Nhiệm vụ "Về Đích" (Hoàn thành 100% Code)	S�
 4	Lý Gia Bảo	Game Logic	3. Fix lỗi logic di chuyển & các trường hợp đặc biệt.	FinalLogic.cs
 5	Nguyễn Minh Nhựt	Timer/Protocol	3. Đồng bộ Timer & Kết hợp với Hiếu làm Giao thức Chat.	GameTimer.cs
 6	Ngô Hoàng Hiếu	Logic/Security	3. Code chung: Chat, Login & Chạy Stress Test hệ thống.	ChatHandler.cs
+
+===============
+NHIỆM VỤ TUẦN 4
+===============
+STT	Thành viên	Nội dung Slide phụ trách	Ghi chú kỹ thuật
+1	Trọng Nhân	Slide bìa, Giới thiệu nhóm, Quản lý hệ thống & Tổng kết dự án.	Show ảnh chụp GitHub Contributor.
+2	Đại Vũ	Kiến trúc Network, Kết nối Socket TCP/IP & Xử lý đa luồng.	Vẽ sơ đồ luồng dữ liệu (Flowchart).
+3	Đình Bảo	Thiết kế GUI WinForms, Quản lý Assets (Ảnh/Âm thanh).	Show các màn hình giao diện chính.
+4	Gia Bảo	Thuật toán Logic Game, Move Validator & Xử lý Chiếu bí.	Show sơ đồ thuật toán kiểm tra luật.
+5	Minh Nhựt	Giao thức truyền tin (Protocol), Cấu trúc Packet & Timer.	Show bảng mã Enum (PacketType).
+6	Hoàng Hiếu	Tính năng Chat, Login & Báo cáo kết quả Stress Test.	Show biểu đồ/số liệu sau khi Test.
