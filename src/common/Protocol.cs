@@ -39,6 +39,8 @@ public struct PacketHeader
         public static byte[] CreateMove(int x1, int y1, int x2, int y2) => CreatePacket(PacketType.Move, $"{x1},{y1},{x2},{y2}");
         public static byte[] CreateSurrender() => CreatePacket(PacketType.Surrender, "");
         public static byte[] CreateChat(string message) => CreatePacket(PacketType.Chat, message);
+        public static byte[] CreateGameStart(string color) => CreatePacket(PacketType.GameStart, color);
+        public static byte[] CreateGameEnd(string reason) => CreatePacket(PacketType.GameEnd, reason);
 
         private static byte[] CreatePacket(PacketType type, string data)
         {

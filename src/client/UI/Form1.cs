@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using CoTuongOnline.Common;
 using CoTuongOnline.Logic;
 using CoTuongOnline.Final;
+using CoTuongOnline.Network;
 
 namespace CoTuongOnline.Client
 {
@@ -19,6 +21,11 @@ namespace CoTuongOnline.Client
         private Point? _selectedCell = null;
         private List<Point> _validMoves = new List<Point>();
         private bool _isRedTurn = true;
+
+        // === NETWORK ===
+        private ConnectionGuard? _connectionGuard;
+        private bool _isOnline = false;
+        private bool _isPlayerRed = true; // mặc định đỏ cho offline
 
         private GameTimer _gameTimer = new GameTimer();
         private Label lblTimerRed = null!;
@@ -130,6 +137,9 @@ namespace CoTuongOnline.Client
             int row = (e.Y - StartY + Cell / 2) / Cell;
             if (col < 0 || col > 8 || row < 0 || row > 9) return;
 
+            // Online: chỉ cho phép đi quân của mình
+            if (_isOnline && _isRedTurn != _isPlayerRed) return;
+
             Piece? clickedPiece = _board.grid[row, col];
 
             // BƯỚC 1: Chưa chọn quân
@@ -173,6 +183,10 @@ namespace CoTuongOnline.Client
                     SoundManager.PlayCapture();
                 else
                     SoundManager.PlayMove();
+
+                // Gửi nước đi qua mạng
+                if (_isOnline && _connectionGuard?.Listener != null)
+                    _ = _connectionGuard.Listener.SendMoveAsync(fromRow, fromCol, row, col);
 
                 _isRedTurn = !_isRedTurn;
 
@@ -340,7 +354,7 @@ namespace CoTuongOnline.Client
                 }));
             };
 
-            // Nút Thách Đấu
+            // Nút Thách Đấu (kết nối server)
             Button btnThachDau = new Button
             {
                 Text = "Thách Đấu",
@@ -351,7 +365,29 @@ namespace CoTuongOnline.Client
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat
             };
-            btnThachDau.Click += (s, ev) => MessageBox.Show("Tính năng kết nối mạng sẽ có trong bản tiếp theo!");
+            btnThachDau.Click += async (s, ev) =>
+            {
+                if (_isOnline)
+                {
+                    MessageBox.Show("Bạn đã kết nối rồi!", "Thông báo");
+                    return;
+                }
+                string? serverIp = PromptServerIp();
+                if (string.IsNullOrEmpty(serverIp)) return;
+                btnThachDau.Enabled = false;
+                btnThachDau.Text = "Đang nối...";
+                try
+                {
+                    await ConnectToServer(serverIp, 54000);
+                    btnThachDau.Text = "Đã kết nối";
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Không thể kết nối: {ex.Message}", "Lỗi");
+                    btnThachDau.Enabled = true;
+                    btnThachDau.Text = "Thách Đấu";
+                }
+            };
             this.Controls.Add(btnThachDau);
 
             // Nút Chơi Lại
@@ -391,9 +427,9 @@ namespace CoTuongOnline.Client
 
             _chatBox.OnChatMessage += (msg) =>
             {
-                // TODO: gửi qua mạng khi có kết nối
-                _chatBox.AppendLog($"[Bạn]: {msg}", Color.DarkBlue);
-                Console.WriteLine($"[CHAT] {msg}");
+                // Gửi chat qua mạng (ChatBox đã hiện "[Bạn]:" rồi, không cần hiện lại)
+                if (_isOnline && _connectionGuard?.Listener != null)
+                    _ = _connectionGuard.Listener.SendChatAsync(msg);
             };
 
             _chatBox.OnCommand += (cmd, arg) =>
@@ -445,6 +481,131 @@ namespace CoTuongOnline.Client
             txtStatus.ForeColor = Color.DarkRed;
 
             this.Invalidate();
+        }
+
+        // ===== NETWORK METHODS =====
+
+        private async Task ConnectToServer(string serverIp, int port)
+        {
+            _connectionGuard = new ConnectionGuard(this);
+
+            _connectionGuard.StateChanged += (state) =>
+            {
+                _chatBox.AppendLog($"[Kết nối] {state}", Color.Gray);
+            };
+
+            await _connectionGuard.ConnectAsync(serverIp, port);
+
+            // Wire up game events sau khi kết nối thành công
+            WireUpGameEvents();
+
+            _chatBox.AppendLog("[Kết nối] Đã kết nối! Đang chờ đối thủ...", Color.DarkGreen);
+        }
+
+        private void WireUpGameEvents()
+        {
+            var listener = _connectionGuard?.Listener;
+            if (listener == null) return;
+
+            // Game bắt đầu — server gửi màu quân cho mình
+            listener.OnGameStart += (isRed) =>
+            {
+                _isPlayerRed = isRed;
+                _isOnline = true;
+                _isRedTurn = true; // Đỏ luôn đi trước
+
+                _board = new Board();
+                _board.Init();
+                _selectedCell = null;
+                _validMoves.Clear();
+
+                string color = isRed ? "Đỏ (đi trước)" : "Đen (đi sau)";
+                _chatBox.AppendLog($"[Game] Bạn chơi quân {color}!", Color.DarkGreen);
+                txtStatus.Text = "🔴 Lượt Đỏ";
+                txtStatus.ForeColor = Color.DarkRed;
+
+                _gameTimer.StopAll();
+                _gameTimer.StartGame();
+                this.Invalidate();
+            };
+
+            // Nhận nước đi từ đối thủ
+            listener.OnOpponentMove += HandleOpponentMove;
+
+            // Nhận chat từ đối thủ
+            listener.OnChatReceived += (msg) =>
+            {
+                _chatBox.AppendOpponentMessage(msg);
+            };
+
+            // Đối thủ đầu hàng
+            listener.OnOpponentSurrender += () =>
+            {
+                _chatBox.AppendLog("[Game] Đối thủ đầu hàng! Bạn thắng!", Color.DarkGreen);
+                ShowGameResult(true);
+            };
+
+            // Game kết thúc (đối thủ thoát, v.v.)
+            listener.OnGameEnd += (reason) =>
+            {
+                _chatBox.AppendLog($"[Game] {reason}", Color.OrangeRed);
+                _isOnline = false;
+            };
+        }
+
+        private void HandleOpponentMove(int fromRow, int fromCol, int toRow, int toCol)
+        {
+            Piece? captured = _board.grid[toRow, toCol];
+
+            bool moved = FinalLogic.TryMove(_board, fromRow, fromCol, toRow, toCol, !_isPlayerRed);
+            if (!moved) return;
+
+            if (captured != null)
+                SoundManager.PlayCapture();
+            else
+                SoundManager.PlayMove();
+
+            _isRedTurn = !_isRedTurn;
+
+            _gameTimer.StopCountdown();
+            _gameTimer.StartTurn();
+
+            txtStatus.Text = _isRedTurn ? "🔴 Lượt Đỏ" : "⚫ Lượt Đen";
+            txtStatus.ForeColor = _isRedTurn ? Color.DarkRed : Color.Black;
+
+            _selectedCell = null;
+            _validMoves.Clear();
+
+            if (ChessRules.IsCheckmate(_board, _isRedTurn))
+                ShowGameResult(false); // Đối thủ vừa chiếu hết mình → mình thua
+
+            this.Invalidate();
+        }
+
+        private static string? PromptServerIp()
+        {
+            using var dialog = new Form();
+            dialog.Text = "Kết nối Server";
+            dialog.Size = new Size(320, 160);
+            dialog.StartPosition = FormStartPosition.CenterParent;
+            dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+            dialog.MaximizeBox = false;
+            dialog.MinimizeBox = false;
+
+            var label = new Label { Text = "Nhập IP server:", Location = new Point(15, 15), AutoSize = true };
+            var textBox = new TextBox { Text = "127.0.0.1", Location = new Point(15, 40), Size = new Size(270, 25) };
+            var btnOk = new Button
+            {
+                Text = "Kết nối",
+                DialogResult = DialogResult.OK,
+                Location = new Point(110, 75),
+                Size = new Size(90, 32)
+            };
+
+            dialog.Controls.AddRange(new Control[] { label, textBox, btnOk });
+            dialog.AcceptButton = btnOk;
+
+            return dialog.ShowDialog() == DialogResult.OK ? textBox.Text.Trim() : null;
         }
     }
 }
