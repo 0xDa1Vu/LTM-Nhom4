@@ -481,17 +481,24 @@ namespace CoTuongOnline.Client
             txtStatus.ForeColor = Color.DarkRed;
 
             this.Invalidate();
-        }  
+        }
 
         private async Task ConnectToServer(string serverIp, int port)
         {
-            {
             _connectionGuard = new ConnectionGuard(this);
 
             _connectionGuard.StateChanged += (state) =>
             {
                 _chatBox.AppendLog($"[Kết nối] {state}", Color.Gray);
             };
+
+            await _connectionGuard.ConnectAsync(serverIp, port);
+
+            WireUpGameEvents();
+
+            _chatBox.AppendLog("[Kết nối] Đã kết nối! Đang chờ đối thủ...", Color.DarkGreen);
+        }   
+    };
 
             await _connectionGuard.ConnectAsync(serverIp, port);
 

@@ -102,50 +102,51 @@ namespace ChessServer
         }
 
         // ===================== STRESS TEST =====================
-       public void RunStressTest()
-{
-    Console.WriteLine("=== STRESS TEST START ===");
-
-    int totalMessages = 0;
-    int errorCount = 0;
-
-    Stopwatch sw = Stopwatch.StartNew();
-
-    // tạo user giả
-    for (int i = 0; i < 50; i++)
-    {
-        Login($"user{i}");
-    }
-
-    Parallel.For(0, 50, i =>
-    {
-        string user = $"user{i}";
-
-        for (int j = 0; j < 20; j++)
+        public void RunStressTest()
         {
-            try
-            {
-                SendGlobalMessage(user, $"Hello all {j}");
-                SendPrivateMessage(user, $"user{(i + 1) % 50}", $"Hi");
+            Console.WriteLine("=== STRESS TEST START ===");
 
-                Interlocked.Add(ref totalMessages, 2);
-            }
-            catch
+            int totalMessages = 0;
+            int errorCount = 0;
+
+            Stopwatch sw = Stopwatch.StartNew();
+
+            // tạo user giả
+            for (int i = 0; i < 50; i++)
             {
-                Interlocked.Increment(ref errorCount);
+                Login($"user{i}");
             }
+
+            Parallel.For(0, 50, i =>
+            {
+                string user = $"user{i}";
+
+                for (int j = 0; j < 20; j++)
+                {
+                    try
+                    {
+                        SendGlobalMessage(user, $"Hello all {j}");
+                        SendPrivateMessage(user, $"user{(i + 1) % 50}", $"Hi");
+
+                        Interlocked.Add(ref totalMessages, 2);
+                    }
+                    catch
+                    {
+                        Interlocked.Increment(ref errorCount);
+                    }
+                }
+            });
+
+            sw.Stop();
+
+            Console.WriteLine("=== STRESS TEST END ===");
+
+            Console.WriteLine($"Total Messages: {totalMessages}");
+            Console.WriteLine($"Errors: {errorCount}");
+            Console.WriteLine($"Time: {sw.ElapsedMilliseconds} ms");
+
+            double throughput = totalMessages / (sw.ElapsedMilliseconds / 1000.0);
+            Console.WriteLine($"Throughput: {throughput:F2} msg/s");
         }
-    });
-
-    sw.Stop();
-
-    Console.WriteLine("=== STRESS TEST END ===");
-
-    Console.WriteLine($"Total Messages: {totalMessages}");
-    Console.WriteLine($"Errors: {errorCount}");
-    Console.WriteLine($"Time: {sw.ElapsedMilliseconds} ms");
-
-    double throughput = totalMessages / (sw.ElapsedMilliseconds / 1000.0);
-    Console.WriteLine($"Throughput: {throughput:F2} msg/s");
-}
+    }
 }
