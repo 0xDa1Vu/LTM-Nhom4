@@ -73,15 +73,14 @@ namespace ChessServer
         /// </summary>
         public static void SendBytes(TcpClient client, byte[] data)
         {
-			try
-			{
-				byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
-				client.GetStream().Write(data, 0, data.Length);
-			}
-			catch (Exception ex)
-			{
-				Logger.WriteLog($"[ROOM] Lỗi gửi tin: {ex.Message}");
-			}
-		}
-	}
+            try
+            {
+                client.GetStream().Write(data, 0, data.Length);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog($"[ROOM] Lỗi gửi tin: {ex.Message}");
+            }
+        }
+    }
 }

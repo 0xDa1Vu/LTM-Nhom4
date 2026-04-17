@@ -481,11 +481,11 @@ namespace CoTuongOnline.Client
             txtStatus.ForeColor = Color.DarkRed;
 
             this.Invalidate();
-
-            // ===== NETWORK METHODS =====
+        }  
 
         private async Task ConnectToServer(string serverIp, int port)
         {
+            {
             _connectionGuard = new ConnectionGuard(this);
 
             _connectionGuard.StateChanged += (state) =>

@@ -55,9 +55,8 @@ namespace ChessServer
                 {
                     int byteRead = stream.Read(buffer, 0, buffer.Length);
                     if (byteRead == 0) break;
-
                     Logger.WriteLog($"[ROOM {_roomId}] {role}: nhận {byteRead} bytes");
-                    Logger.WriteLog($"[ROOM {_roomId}] {role}: {message}");
+                    // Xóa dòng Logger dùng 'message'
 
                     // Chuyển tiếp raw bytes sang đối thủ (giữ nguyên binary protocol)
                     try
