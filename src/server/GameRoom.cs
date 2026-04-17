@@ -1,9 +1,9 @@
 using System;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
-
+using CoTuongOnline.Network;
 namespace ChessServer
+
 {
     /// <summary>
     /// 1 phòng chơi = 2 người chơi
@@ -27,11 +27,11 @@ namespace ChessServer
         {
             Logger.WriteLog($"[ROOM {_roomId}] Ván đấu bắt đầu!");
 
-            // Thông báo vai trò cho 2 người chơi
-            RoomManager.SendMessage(_player1, "START|RED");
-            RoomManager.SendMessage(_player2, "START|BLACK");
+            // Thông báo vai trò cho 2 người chơi (dùng Protocol binary format)
+            SendBytes(_player1, Protocol.CreateGameStart("RED"));
+            SendBytes(_player2, Protocol.CreateGameStart("BLACK"));
 
-            // Chạy 2 luồng lắng nghe song song, await thay vì WaitAll để không block
+            // Chạy 2 luồng lắng nghe song song
             Task t1 = Task.Run(() => ListenFrom(_player1, _player2, "Đỏ"));
             Task t2 = Task.Run(() => ListenFrom(_player2, _player1, "Đen"));
 
@@ -56,11 +56,19 @@ namespace ChessServer
                     int byteRead = stream.Read(buffer, 0, buffer.Length);
                     if (byteRead == 0) break;
 
-                    string message = Encoding.UTF8.GetString(buffer, 0, byteRead);
+                    Logger.WriteLog($"[ROOM {_roomId}] {role}: nhận {byteRead} bytes");
                     Logger.WriteLog($"[ROOM {_roomId}] {role}: {message}");
 
-                    // Chuyển tiếp sang đối thủ
-                    RoomManager.SendMessage(receiver, message);
+                    // Chuyển tiếp raw bytes sang đối thủ (giữ nguyên binary protocol)
+                    try
+                    {
+                        receiver.GetStream().Write(buffer, 0, byteRead);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.WriteLog($"[ROOM {_roomId}] Lỗi gửi tới đối thủ: {ex.Message}");
+                        break;
+                    }
                 }
             }
             catch (Exception ex)
@@ -71,11 +79,23 @@ namespace ChessServer
             {
                 _gameRunning = false;
 
-                // Báo người còn lại biết đối thủ đã thoát
-                RoomManager.SendMessage(receiver, "OPPONENT_LEFT|Đối thủ đã thoát khỏi phòng.");
+
+                // Báo người còn lại biết đối thủ đã thoát (dùng Protocol binary format)
+                SendBytes(receiver, Protocol.CreateGameEnd("Đối thủ đã thoát khỏi phòng."));
 
                 sender.Close();
                 Logger.WriteLog($"[ROOM {_roomId}] {role} đã ngắt kết nối.");
+            }
+        }
+        private static void SendBytes(TcpClient client, byte[] data)
+        {
+            try
+            {
+                client.GetStream().Write(data, 0, data.Length);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog($"[ROOM] Lỗi gửi: {ex.Message}");
             }
         }
     }

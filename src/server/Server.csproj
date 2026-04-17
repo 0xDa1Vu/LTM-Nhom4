@@ -5,6 +5,9 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	  <ItemGroup>
+		  <Compile Include="..\common\Protocol.cs" />
+	  </ItemGroup>  
   </PropertyGroup>
 
 </Project>

@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using CoTuongOnline.Network;
 
 namespace ChessServer
 {
 	/// <summary>
 	/// Quản lý phòng chơi — ghép cặp 2 người chơi vào 1 phòng
-	/// </summary>
+	/// </summary>	
 	public class RoomManager
 	{
 		// Danh sách phòng đang chạy
@@ -35,9 +36,9 @@ namespace ChessServer
 					_waitingClient = client;
 					Logger.WriteLog($"[ROOM] Người chơi đang chờ đối thủ...");
 
-					// Báo client biết đang chờ
-					SendMessage(client, "WAITING|Đang chờ đối thủ...");
-				}
+                    // Báo client biết đang chờ (dùng Protocol binary format)
+                    SendBytes(client, Protocol.CreateChat("Đang chờ đối thủ..."));
+                }
 				else
 				{
 					// Đã có người chờ → ghép cặp tạo phòng
@@ -67,11 +68,11 @@ namespace ChessServer
 			}
 		}
 
-		/// <summary>
-		/// Gửi tin nhắn tới 1 client
-		/// </summary>
-		public static void SendMessage(TcpClient client, string message)
-		{
+        /// <summary>
+        /// Gửi tin nhắn tới 1 client
+        /// </summary>
+        public static void SendBytes(TcpClient client, byte[] data)
+        {
 			try
 			{
 				byte[] data = System.Text.Encoding.UTF8.GetBytes(message);

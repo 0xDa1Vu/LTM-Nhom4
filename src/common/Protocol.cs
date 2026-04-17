@@ -40,6 +40,10 @@ public struct PacketHeader
         public static byte[] CreateSurrender() => CreatePacket(PacketType.Surrender, "");
         public static byte[] CreateChat(string message) => CreatePacket(PacketType.Chat, message);
 
+        public static byte[] CreateGameStart(string color) => CreatePacket(PacketType.GameStart, color);
+        public static byte[] CreateGameEnd(string reason) => CreatePacket(PacketType.GameEnd, reason);
+
+
         private static byte[] CreatePacket(PacketType type, string data)
         {
             byte[] dataBytes = Encoding.UTF8.GetBytes(data);
