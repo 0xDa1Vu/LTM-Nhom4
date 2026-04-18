@@ -25,7 +25,7 @@ namespace CoTuongOnline.Client
         // === NETWORK ===
         private ConnectionGuard? _connectionGuard;
         private bool _isOnline = false;
-        private bool _isPlayerRed = true; // mặc định đỏ cho offline
+        private bool _isPlayerRed = true;
 
         private GameTimer _gameTimer = new GameTimer();
         private Label lblTimerRed = null!;
@@ -103,7 +103,6 @@ namespace CoTuongOnline.Client
             g.DrawString("楚河", fontRiver, Brushes.DarkRed, StartX + 1.4f * Cell, StartY + 4.15f * Cell);
             g.DrawString("漢界", fontRiver, Brushes.DarkRed, StartX + 4.8f * Cell, StartY + 4.15f * Cell);
 
-            // Highlight ô đang chọn (vàng)
             if (_selectedCell.HasValue)
             {
                 int hx = StartX + _selectedCell.Value.X * Cell - Cell / 2;
@@ -111,7 +110,6 @@ namespace CoTuongOnline.Client
                 g.FillRectangle(new SolidBrush(Color.FromArgb(120, 255, 215, 0)), hx, hy, Cell, Cell);
             }
 
-            // Chấm xanh = nước đi hợp lệ
             foreach (var p in _validMoves)
             {
                 int cx = StartX + p.X * Cell;
@@ -119,7 +117,6 @@ namespace CoTuongOnline.Client
                 g.FillEllipse(new SolidBrush(Color.FromArgb(160, 0, 180, 0)), cx - 10, cy - 10, 20, 20);
             }
 
-            // Vẽ quân từ _board.grid
             for (int row = 0; row < 10; row++)
                 for (int col = 0; col < 9; col++)
                 {
@@ -137,12 +134,10 @@ namespace CoTuongOnline.Client
             int row = (e.Y - StartY + Cell / 2) / Cell;
             if (col < 0 || col > 8 || row < 0 || row > 9) return;
 
-            // Online: chỉ cho phép đi quân của mình
             if (_isOnline && _isRedTurn != _isPlayerRed) return;
 
             Piece? clickedPiece = _board.grid[row, col];
 
-            // BƯỚC 1: Chưa chọn quân
             if (_selectedCell == null)
             {
                 if (clickedPiece == null) return;
@@ -157,7 +152,6 @@ namespace CoTuongOnline.Client
             int fromCol = _selectedCell.Value.X;
             int fromRow = _selectedCell.Value.Y;
 
-            // Click lại ô đó → bỏ chọn
             if (fromRow == row && fromCol == col)
             {
                 _selectedCell = null;
@@ -166,7 +160,6 @@ namespace CoTuongOnline.Client
                 return;
             }
 
-            // Click quân cùng màu → đổi chọn
             if (clickedPiece != null && clickedPiece.IsRed == _isRedTurn)
             {
                 _selectedCell = new Point(col, row);
@@ -175,7 +168,6 @@ namespace CoTuongOnline.Client
                 return;
             }
 
-            // Thử di chuyển
             bool moved = FinalLogic.TryMove(_board, fromRow, fromCol, row, col, _isRedTurn);
             if (moved)
             {
@@ -184,14 +176,10 @@ namespace CoTuongOnline.Client
                 else
                     SoundManager.PlayMove();
 
-                // Gửi nước đi qua mạng
                 if (_isOnline && _connectionGuard?.Listener != null)
                     _ = _connectionGuard.Listener.SendMoveAsync(fromRow, fromCol, row, col);
 
-
                 _isRedTurn = !_isRedTurn;
-
-                // Reset đồng hồ cho lượt mới
                 _gameTimer.StopCountdown();
                 _gameTimer.StartTurn();
 
@@ -288,10 +276,8 @@ namespace CoTuongOnline.Client
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            int btnX = StartX * 2 + 8 * Cell + 10;  // ← chỉ khai báo 1 lần
-            int formH = StartY * 2 + 9 * Cell;
+            int btnX = StartX * 2 + 8 * Cell + 10;
 
-            // Trạng thái lượt
             txtStatus = new TextBox
             {
                 Text = "🔴 Lượt Đỏ",
@@ -307,7 +293,6 @@ namespace CoTuongOnline.Client
             txtStatus.TabStop = false;
             this.Controls.Add(txtStatus);
 
-            // ===== ĐỒNG HỒ =====
             lblTimerRed = new Label
             {
                 Text = "🔴 Đỏ: 30s",
@@ -330,7 +315,6 @@ namespace CoTuongOnline.Client
             };
             this.Controls.Add(lblTimerBlack);
 
-            // Đăng ký event đồng hồ đếm ngược
             _gameTimer.CountdownChanged += (seconds) =>
             {
                 if (this.IsDisposed) return;
@@ -343,7 +327,6 @@ namespace CoTuongOnline.Client
                 }));
             };
 
-            // Hết giờ → thua
             _gameTimer.CountdownEnd += () =>
             {
                 if (this.IsDisposed) return;
@@ -355,7 +338,6 @@ namespace CoTuongOnline.Client
                 }));
             };
 
-            // Nút Thách Đấu
             Button btnThachDau = new Button
             {
                 Text = "Thách Đấu",
@@ -389,8 +371,8 @@ namespace CoTuongOnline.Client
                     btnThachDau.Text = "Thách Đấu";
                 }
             };
+            this.Controls.Add(btnThachDau);
 
-            // Nút Chơi Lại
             Button btnReplay = new Button
             {
                 Text = "Chơi Lại",
@@ -404,7 +386,6 @@ namespace CoTuongOnline.Client
             btnReplay.Click += (s, ev) => ResetGame();
             this.Controls.Add(btnReplay);
 
-            // Nút Thoát
             Button btnThoat = new Button
             {
                 Text = "Thoát",
@@ -418,7 +399,6 @@ namespace CoTuongOnline.Client
             btnThoat.Click += (s, ev) => Application.Exit();
             this.Controls.Add(btnThoat);
 
-            // ===== CHATBOX (vấn đề 3 — lệnh "/" đã được tích hợp sẵn trong ChatBox.cs) =====
             _chatBox = new ChatBox
             {
                 Location = new Point(btnX, 310),
@@ -427,7 +407,6 @@ namespace CoTuongOnline.Client
 
             _chatBox.OnChatMessage += (msg) =>
             {
-                // Gửi chat qua mạng (ChatBox đã hiện "[Bạn]:" rồi, không cần hiện lại)
                 if (_isOnline && _connectionGuard?.Listener != null)
                     _ = _connectionGuard.Listener.SendChatAsync(msg);
             };
@@ -451,8 +430,6 @@ namespace CoTuongOnline.Client
             };
 
             this.Controls.Add(_chatBox);
-
-            // Bắt đầu đồng hồ
             _gameTimer.StartGame();
         }
 
@@ -493,18 +470,7 @@ namespace CoTuongOnline.Client
             };
 
             await _connectionGuard.ConnectAsync(serverIp, port);
-
             WireUpGameEvents();
-
-            _chatBox.AppendLog("[Kết nối] Đã kết nối! Đang chờ đối thủ...", Color.DarkGreen);
-        }   
-    };
-
-            await _connectionGuard.ConnectAsync(serverIp, port);
-
-            // Wire up game events sau khi kết nối thành công
-            WireUpGameEvents();
-
             _chatBox.AppendLog("[Kết nối] Đã kết nối! Đang chờ đối thủ...", Color.DarkGreen);
         }
 
@@ -513,12 +479,11 @@ namespace CoTuongOnline.Client
             var listener = _connectionGuard?.Listener;
             if (listener == null) return;
 
-            // Game bắt đầu — server gửi màu quân cho mình
             listener.OnGameStart += (isRed) =>
             {
                 _isPlayerRed = isRed;
                 _isOnline = true;
-                _isRedTurn = true; // Đỏ luôn đi trước
+                _isRedTurn = true;
 
                 _board = new Board();
                 _board.Init();
@@ -535,23 +500,19 @@ namespace CoTuongOnline.Client
                 this.Invalidate();
             };
 
-            // Nhận nước đi từ đối thủ
             listener.OnOpponentMove += HandleOpponentMove;
 
-            // Nhận chat từ đối thủ
             listener.OnChatReceived += (msg) =>
             {
                 _chatBox.AppendOpponentMessage(msg);
             };
 
-            // Đối thủ đầu hàng
             listener.OnOpponentSurrender += () =>
             {
                 _chatBox.AppendLog("[Game] Đối thủ đầu hàng! Bạn thắng!", Color.DarkGreen);
                 ShowGameResult(true);
             };
 
-            // Game kết thúc (đối thủ thoát, v.v.)
             listener.OnGameEnd += (reason) =>
             {
                 _chatBox.AppendLog($"[Game] {reason}", Color.OrangeRed);
@@ -572,7 +533,6 @@ namespace CoTuongOnline.Client
                 SoundManager.PlayMove();
 
             _isRedTurn = !_isRedTurn;
-
             _gameTimer.StopCountdown();
             _gameTimer.StartTurn();
 
@@ -583,7 +543,7 @@ namespace CoTuongOnline.Client
             _validMoves.Clear();
 
             if (ChessRules.IsCheckmate(_board, _isRedTurn))
-                ShowGameResult(false); // Đối thủ vừa chiếu hết mình → mình thua
+                ShowGameResult(false);
 
             this.Invalidate();
         }
